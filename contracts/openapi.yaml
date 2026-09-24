@@ -283,7 +283,21 @@ paths:
         - { in: query, name: maxLat, schema: { type: number, format: double } }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
-      responses: { '200': { description: Entity list } }
+      responses:
+        '200':
+          description: Entity list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/GeoEntity' }
+                  total: { type: integer }
+                  page: { type: integer }
+                  pageSize: { type: integer }
+                  nextPage: { type: integer, nullable: true }
   /v1/geodata/imports/manual:
     post:
       tags: [Geodata]
@@ -704,6 +718,35 @@ components:
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         source: { type: object }
         features: { type: array, items: { type: object } }
+    GeoEntity:
+      type: object
+      required: [id, programmeSlug, name, status, geometry]
+      properties:
+        id: { type: string, format: uuid }
+        programmeSlug: { type: string }
+        entityType: { type: string }
+        name: { type: string }
+        status: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED, RETIRED] }
+        geometry: { type: object, additionalProperties: true }
+        centroid: { type: object, additionalProperties: true }
+        continent: { type: string, nullable: true }
+        continentCode: { type: string, nullable: true, description: ISO-style continent code from the geocoder }
+        country: { type: string, nullable: true }
+        countryCode: { type: string, nullable: true, description: ISO 3166-1 country code }
+        region: { type: string, nullable: true, description: First administrative subdivision after the country }
+        regionCode: { type: string, nullable: true, description: ISO 3166-2 code for the first subdivision after the country }
+        subdivision: { type: string, nullable: true }
+        subdivisionCode: { type: string, nullable: true }
+        province: { type: string, nullable: true }
+        provinceCode: { type: string, nullable: true }
+        county: { type: string, nullable: true }
+        countyCode: { type: string, nullable: true }
+        city: { type: string, nullable: true, description: City or municipality }
+        locality: { type: string, nullable: true }
+        geocodeProvider: { type: string, nullable: true }
+        geocodeStatus: { type: string, enum: [ENRICHED, FAILED, NOT_CONFIGURED, SKIPPED_NO_CENTROID], nullable: true }
+        geocodedAt: { type: string, format: date-time, nullable: true }
+        provenance: { type: object, additionalProperties: true }
     Activation:
       type: object
       required: [programmeSlug, entityId, operatorId, startedAt]
