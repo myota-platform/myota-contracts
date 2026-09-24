@@ -345,6 +345,23 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/AwardAsset' } } }
       responses: { '201': { description: Asset registered } }
+  /v1/awards/assets/{assetId}/upload-url:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Create a short-lived direct upload URL for an image asset
+      parameters: [{ $ref: '#/components/parameters/AssetId' }]
+      responses: { '200': { description: Presigned object upload URL } }
+  /v1/awards/assets/{assetId}/content:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Upload small image content through the API
+      parameters: [{ $ref: '#/components/parameters/AssetId' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AssetContent' } } }
+      responses: { '200': { description: Stored asset metadata } }
   /v1/awards/evaluate:
     post:
       tags: [Awards]
@@ -354,6 +371,15 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/AwardEvaluationRequest' } } }
       responses: { '200': { description: Evaluation result } }
+  /v1/awards/progress:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Calculate server-side award progress for the authenticated participant
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardProgressRequest' } } }
+      responses: { '200': { description: Progress and eligible levels } }
   /v1/awards/requests:
     get:
       tags: [Awards]
@@ -388,6 +414,20 @@ paths:
       security: [{ bearerAuth: [] }]
       summary: List permanent award issuance records
       responses: { '200': { description: Award issuance page } }
+  /v1/awards/issuances/{issuanceId}/render:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Retry rendering an issued certificate after its assets are available
+      parameters: [{ $ref: '#/components/parameters/IssuanceId' }]
+      responses: { '200': { description: Certificate rendered } }
+  /v1/awards/issuances/{issuanceId}/download:
+    get:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Get a short-lived certificate download URL
+      parameters: [{ $ref: '#/components/parameters/IssuanceId' }]
+      responses: { '200': { description: Presigned certificate download URL } }
 components:
   securitySchemes:
     bearerAuth:
@@ -423,6 +463,16 @@ components:
     RequestId:
       in: path
       name: requestId
+      required: true
+      schema: { type: string, format: uuid }
+    AssetId:
+      in: path
+      name: assetId
+      required: true
+      schema: { type: string, format: uuid }
+    IssuanceId:
+      in: path
+      name: issuanceId
       required: true
       schema: { type: string, format: uuid }
     Page:
@@ -640,16 +690,22 @@ components:
         awardId: { type: string, format: uuid }
         subjectId: { type: string, format: uuid }
         facts: { type: object, additionalProperties: true }
+    AwardProgressRequest:
+      type: object
+      required: [awardId, subjectId]
+      properties:
+        awardId: { type: string, format: uuid }
+        subjectId: { type: string, format: uuid }
     AwardRequest:
       type: object
-      required: [awardId, levelId, subjectId, callsign, personName, facts]
+      required: [awardId, levelId, subjectId, callsign, personName]
       properties:
         awardId: { type: string, format: uuid }
         levelId: { type: string }
         subjectId: { type: string, format: uuid }
         callsign: { type: string }
         personName: { type: string }
-        facts: { type: object, additionalProperties: true }
+        facts: { type: object, additionalProperties: true, description: Optional facts for trusted service/admin callers; participant requests use server-side activity facts. }
     AwardIssuanceRequest:
       type: object
       required: [managerName, signatureAssetId]
@@ -657,3 +713,8 @@ components:
         managerName: { type: string }
         signatureAssetId: { type: string, format: uuid }
         dateObtained: { type: string, format: date-time }
+    AssetContent:
+      type: object
+      required: [contentBase64]
+      properties:
+        contentBase64: { type: string, contentEncoding: base64 }
