@@ -278,6 +278,30 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/Activation' } } }
       responses: { '201': { description: Created } }
+  /v1/activations/{activationId}:
+    get:
+      tags: [Activity]
+      security: [{ bearerAuth: [] }]
+      summary: Get an activation and its normalized QSOs
+      parameters: [{ $ref: '#/components/parameters/ActivationId' }]
+      responses: { '200': { description: Activation } }
+  /v1/activations/{activationId}/qsos:
+    post:
+      tags: [Activity]
+      security: [{ bearerAuth: [] }]
+      summary: Record a normalized QSO for an open activation
+      parameters: [{ $ref: '#/components/parameters/ActivationId' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/Qso' } } }
+      responses: { '201': { description: QSO recorded } }
+  /v1/activations/{activationId}/close:
+    post:
+      tags: [Activity]
+      security: [{ bearerAuth: [] }]
+      summary: Close an activation
+      parameters: [{ $ref: '#/components/parameters/ActivationId' }]
+      responses: { '200': { description: Activation closed } }
   /v1/awards:
     get:
       tags: [Awards]
@@ -450,6 +474,11 @@ components:
       name: entityId
       required: true
       schema: { type: string, format: uuid }
+    ActivationId:
+      in: path
+      name: activationId
+      required: true
+      schema: { type: string, format: uuid }
     CallsignId:
       in: path
       name: callsignId
@@ -588,6 +617,20 @@ components:
         entityId: { type: string, format: uuid }
         operatorId: { type: string, format: uuid }
         startedAt: { type: string, format: date-time }
+        entityType: { type: string }
+        location: { type: object, additionalProperties: true }
+    Qso:
+      type: object
+      required: [workedCallsign, timestamp]
+      properties:
+        workedCallsign: { type: string }
+        timestamp: { type: string, format: date-time }
+        band: { type: string }
+        mode: { type: string }
+        rst: { type: string }
+        hunterId: { type: string, format: uuid }
+        workedEntityId: { type: string, format: uuid }
+        source: { type: string }
     AwardCondition:
       description: Programme-owned recursive AND/OR condition tree.
       oneOf:
