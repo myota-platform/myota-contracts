@@ -77,6 +77,56 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
       responses: { '200': { description: Account page } }
+  /v1/identity/admin/accounts/{accountId}/update:
+    post:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: Edit an account and replace its active administrative roles
+      parameters: [{ $ref: '#/components/parameters/AccountId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayName: { type: string }
+                email: { type: string, format: email, nullable: true }
+                participationType: { type: string, enum: [OPERATOR, SWL] }
+                status: { type: string, enum: [ACTIVE, DEACTIVATED] }
+                password: { type: string, minLength: 12, writeOnly: true }
+                roles:
+                  type: array
+                  items: { $ref: '#/components/schemas/RoleAssignment' }
+      responses: { '200': { description: Updated account and active roles } }
+  /v1/identity/admin/roles:
+    get:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: List built-in and custom administrative roles and permissions
+      responses: { '200': { description: Role catalogue } }
+    post:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: Create a custom administrative role
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AdminRoleDefinition' } } }
+      responses: { '201': { description: Created role definition } }
+  /v1/identity/admin/roles/{roleCode}/update:
+    post:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: Edit a custom administrative role
+      parameters:
+        - in: path
+          name: roleCode
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AdminRoleDefinition' } } }
+      responses: { '200': { description: Updated role definition } }
   /v1/identity/admin/security-events:
     get:
       tags: [Identity]
@@ -227,6 +277,10 @@ paths:
         - in: query
           name: status
           schema: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED] }
+        - { in: query, name: minLon, schema: { type: number, format: double } }
+        - { in: query, name: minLat, schema: { type: number, format: double } }
+        - { in: query, name: maxLon, schema: { type: number, format: double } }
+        - { in: query, name: maxLat, schema: { type: number, format: double } }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
       responses: { '200': { description: Entity list } }
@@ -259,6 +313,38 @@ paths:
                 reviewerId: { type: string }
                 note: { type: string }
       responses: { '200': { description: Review recorded } }
+  /v1/geodata/entities/{entityId}/geometry-type:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Convert a geodata entity between point and polygon geometry
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [geometryType, editorId]
+              properties:
+                geometryType: { type: string, enum: [POINT, POLYGON] }
+                editorId: { type: string }
+                note: { type: string }
+      responses: { '200': { description: Geometry type changed and audited } }
+  /v1/geodata/entities/{entityId}/delete:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Permanently delete a rejected entity and its audit record
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [deletedBy], properties: { deletedBy: { type: string } } } } }
+      responses: { '204': { description: Rejected entity and audit record deleted } }
   /v1/activations:
     get:
       tags: [Activity]
@@ -563,10 +649,19 @@ components:
       required: [role]
       properties:
         role: { type: string }
+        code: { type: string, description: Role-definition code accepted by administrative role replacement }
         programmeSlug: { type: string }
         jurisdiction: { type: string }
         entityType: { type: string }
         scopes: { type: array, items: { type: string } }
+    AdminRoleDefinition:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string, pattern: '^[A-Z][A-Z0-9_]*$' }
+        name: { type: string }
+        description: { type: string }
+        scopes: { type: array, uniqueItems: true, items: { type: string } }
     CreateAccount:
       type: object
       required: [displayName, participationType]
