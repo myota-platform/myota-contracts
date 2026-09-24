@@ -1,0 +1,577 @@
+openapi: 3.1.0
+info:
+  title: MyOTA Outdoor Activation Platform APIs
+  version: 1.0.0
+  description: Service contracts for a programme-agnostic amateur-radio outdoor activation platform.
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Identity
+  - name: Programmes
+  - name: Geodata
+  - name: Activity
+paths:
+  /v1/identity/auth/register:
+    post:
+      tags: [Identity]
+      summary: Register an operator or SWL and create a session
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RegisterAccount' } } }
+      responses: { '201': { description: Registered and authenticated } }
+  /v1/identity/auth/login:
+    post:
+      tags: [Identity]
+      summary: Authenticate with email and password
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/Login' } } }
+      responses: { '200': { description: Authenticated } }
+  /v1/identity/auth/refresh:
+    post:
+      tags: [Identity]
+      summary: Rotate a refresh token
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RefreshToken' } } }
+      responses: { '200': { description: Rotated session } }
+  /v1/identity/auth/logout:
+    post:
+      tags: [Identity]
+      summary: Revoke a session or access token
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        content: { application/json: { schema: { $ref: '#/components/schemas/RefreshToken' } } }
+      responses: { '200': { description: Logged out } }
+  /v1/identity/auth/recovery/request:
+    post:
+      tags: [Identity]
+      summary: Request password recovery without disclosing account existence
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RecoveryRequest' } } }
+      responses: { '200': { description: Recovery request accepted } }
+  /v1/identity/auth/recovery/reset:
+    post:
+      tags: [Identity]
+      summary: Set a new password using a single-use recovery token
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RecoveryReset' } } }
+      responses: { '200': { description: Password reset } }
+  /v1/identity/me:
+    get:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: Get the authenticated account and scopes
+      responses: { '200': { description: Authenticated account } }
+  /v1/identity/admin/accounts:
+    get:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: List accounts for global identity administrators
+      parameters:
+        - { in: query, name: q, schema: { type: string } }
+        - { in: query, name: status, schema: { type: string } }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Account page } }
+  /v1/identity/admin/security-events:
+    get:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: List security events for global identity administrators
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Security-event page } }
+  /v1/identity/accounts:
+    post:
+      tags: [Identity]
+      summary: Create an operator or SWL account
+      operationId: createAccount
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateAccount' }
+      responses:
+        '201':
+          description: Created
+          content: { application/json: { schema: { $ref: '#/components/schemas/Account' } } }
+  /v1/identity/accounts/{accountId}/callsigns:
+    post:
+      tags: [Identity]
+      summary: Add and optionally verify a callsign
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AddCallsign' }
+      responses:
+        '201': { description: Created }
+  /v1/identity/accounts/{accountId}/callsigns/{callsignId}/evidence:
+    post:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: Submit callsign verification evidence
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/CallsignId'
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/CallsignEvidence' } } }
+      responses: { '201': { description: Evidence submitted } }
+  /v1/identity/accounts/{accountId}/callsigns/{callsignId}/verify:
+    post:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      summary: Verify callsign evidence using the callsign.verify scope
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/CallsignId'
+      responses: { '200': { description: Callsign verified } }
+  /v1/identity/accounts/{accountId}/roles:
+    get:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/AccountId' }]
+      responses: { '200': { description: Account roles } }
+    post:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/AccountId' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RoleAssignment' } } }
+      responses: { '201': { description: Role assigned } }
+  /v1/identity/accounts/{accountId}/export:
+    get:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/AccountId' }]
+      responses: { '200': { description: Personal data export } }
+  /v1/identity/accounts/{accountId}/deactivate:
+    post:
+      tags: [Identity]
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/AccountId' }]
+      responses: { '200': { description: Account deactivated and sessions revoked } }
+  /v1/programmes:
+    get:
+      tags: [Programmes]
+      summary: List configured programmes
+      responses:
+        '200': { description: Programme list }
+    post:
+      tags: [Programmes]
+      summary: Create a programme configuration
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Programme' }
+      responses: { '201': { description: Created } }
+  /v1/programmes/{slug}/policy:
+    get:
+      tags: [Programmes]
+      summary: Get the effective programme policy version
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Effective programme policy }
+  /v1/programmes/{slug}/update:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Update programme-owned configuration
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        content: { application/json: { schema: { $ref: '#/components/schemas/ProgrammeUpdate' } } }
+      responses: { '200': { description: Updated programme } }
+  /v1/programmes/{slug}/archive:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Archive a programme
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses: { '200': { description: Archived programme } }
+  /v1/programmes/{slug}/content:
+    get:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: List programme-owned content versions
+      parameters:
+        - { in: path, name: slug, required: true, schema: { type: string } }
+        - { in: query, name: locale, schema: { type: string } }
+        - { in: query, name: status, schema: { type: string } }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Content version page } }
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Create or update a draft content version
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ContentDraft' } } }
+      responses: { '200': { description: Draft saved } }
+  /v1/programmes/{slug}/content/coverage:
+    get:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Report published locale coverage and fallback gaps
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }]
+      responses: { '200': { description: Locale coverage report } }
+  /v1/programmes/{slug}/content/{contentId}/submit:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Submit content for review
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { in: path, name: contentId, required: true, schema: { type: string, format: uuid } }]
+      responses: { '200': { description: Submitted content } }
+  /v1/programmes/{slug}/content/{contentId}/review:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Approve or request changes to content
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { in: path, name: contentId, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ReviewDecision' } } }
+      responses: { '200': { description: Review recorded } }
+  /v1/programmes/{slug}/content/{contentId}/publish:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Publish approved content with an explicit effective date
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { in: path, name: contentId, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/PublicationRequest' } } }
+      responses: { '200': { description: Published content } }
+  /v1/programmes/{slug}/policy-drafts:
+    get:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: List programme-owned rule and award drafts
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { in: query, name: type, schema: { type: string, enum: [RULES, AWARD] } }, { $ref: '#/components/parameters/Page' }, { $ref: '#/components/parameters/PageSize' }]
+      responses: { '200': { description: Policy draft page } }
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Create or update a programme-owned policy draft
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/PolicyDraft' } } }
+      responses: { '200': { description: Draft saved } }
+  /v1/programmes/{slug}/policy-drafts/{draftId}/submit:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Submit a rule or award draft for review
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { in: path, name: draftId, required: true, schema: { type: string, format: uuid } }]
+      responses: { '200': { description: Submitted policy draft } }
+  /v1/programmes/{slug}/policy-drafts/{draftId}/review:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Approve or request changes to a rule or award draft
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { in: path, name: draftId, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ReviewDecision' } } }
+      responses: { '200': { description: Review recorded } }
+  /v1/programmes/{slug}/policy-drafts/{draftId}/publish:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Publish an approved rule or award with an explicit effective date
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { in: path, name: draftId, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/PublicationRequest' } } }
+      responses: { '200': { description: Published policy and effective programme snapshot } }
+  /v1/geodata/entities:
+    get:
+      tags: [Geodata]
+      summary: List verified and candidate entities
+      parameters:
+        - in: query
+          name: programme
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED] }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Entity list } }
+  /v1/geodata/imports/manual:
+    post:
+      tags: [Geodata]
+      summary: Import GeoJSON features as candidates
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: '#/components/schemas/GeoImport' } }
+      responses: { '202': { description: Import accepted } }
+  /v1/geodata/entities/{entityId}/review:
+    post:
+      tags: [Geodata]
+      summary: Review a proposed entity
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision, reviewerId]
+              properties:
+                decision: { type: string, enum: [APPROVED, REJECTED] }
+                reviewerId: { type: string }
+                note: { type: string }
+      responses: { '200': { description: Review recorded } }
+  /v1/geodata/entities/{entityId}/audit:
+    get:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Get review, geometry and event audit history
+      parameters: [{ $ref: '#/components/parameters/EntityId' }]
+      responses: { '200': { description: Entity audit history } }
+  /v1/geodata/entities/{entityId}/geometry:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Save an edited geometry and preserve the previous version
+      parameters: [{ $ref: '#/components/parameters/EntityId' }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/GeometryEdit' } } }
+      responses: { '200': { description: Geometry saved with audit history } }
+  /v1/activations:
+    get:
+      tags: [Activity]
+      security: [{ bearerAuth: [] }]
+      summary: List activations for authorised operators and administrators
+      parameters:
+        - in: query
+          name: programme
+          schema: { type: string }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Activation page } }
+    post:
+      tags: [Activity]
+      summary: Start an activation
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/Activation' } } }
+      responses: { '201': { description: Created } }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IdempotencyKey:
+      in: header
+      name: Idempotency-Key
+      required: false
+      schema: { type: string, maxLength: 128 }
+    AccountId:
+      in: path
+      name: accountId
+      required: true
+      schema: { type: string, format: uuid }
+    EntityId:
+      in: path
+      name: entityId
+      required: true
+      schema: { type: string, format: uuid }
+    CallsignId:
+      in: path
+      name: callsignId
+      required: true
+      schema: { type: string, format: uuid }
+    Page:
+      in: query
+      name: page
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSize:
+      in: query
+      name: pageSize
+      schema: { type: integer, minimum: 1, maximum: 100, default: 50 }
+  schemas:
+    Account:
+      type: object
+      required: [id, displayName, participationType, status]
+      properties:
+        id: { type: string, format: uuid }
+        displayName: { type: string }
+        email: { type: string, format: email, nullable: true }
+        participationType: { type: string, enum: [OPERATOR, SWL] }
+        status: { type: string, enum: [ACTIVE, DEACTIVATED] }
+        callsigns: { type: array, items: { type: object } }
+    RegisterAccount:
+      allOf:
+        - $ref: '#/components/schemas/CreateAccount'
+        - type: object
+          required: [email, password]
+          properties:
+            password: { type: string, minLength: 12, format: password }
+    Login:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+    RefreshToken:
+      type: object
+      required: [refreshToken]
+      properties: { refreshToken: { type: string } }
+    RecoveryRequest:
+      type: object
+      required: [email]
+      properties: { email: { type: string, format: email } }
+    RecoveryReset:
+      type: object
+      required: [token, newPassword]
+      properties:
+        token: { type: string }
+        newPassword: { type: string, minLength: 12, format: password }
+    CallsignEvidence:
+      type: object
+      required: [evidenceType, source]
+      properties:
+        evidenceType: { type: string }
+        source: { type: string }
+        checksum: { type: string }
+        metadata: { type: object }
+    RoleAssignment:
+      type: object
+      required: [role]
+      properties:
+        role: { type: string }
+        programmeSlug: { type: string }
+        jurisdiction: { type: string }
+        entityType: { type: string }
+        scopes: { type: array, items: { type: string } }
+    CreateAccount:
+      type: object
+      required: [displayName, participationType]
+      properties:
+        displayName: { type: string, minLength: 1 }
+        email: { type: string, format: email }
+        participationType: { type: string, enum: [OPERATOR, SWL] }
+        callsign: { type: string, description: Optional initial callsign for an operator }
+    AddCallsign:
+      type: object
+      required: [callsign]
+      properties:
+        callsign: { type: string }
+        status: { type: string, enum: [UNVERIFIED, VERIFIED, RETIRED] }
+        source: { type: string }
+    Programme:
+      type: object
+      required: [slug, name, entityTypes, rules]
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        entityTypes: { type: array, items: { type: object } }
+        rules: { type: object }
+        theme: { type: object }
+        oidc: { type: object, nullable: true }
+    ProgrammeUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        entityTypes: { type: array, items: { type: object } }
+        rules: { type: object }
+        theme: { type: object }
+        oidc: { type: object, nullable: true }
+    GeoImport:
+      type: object
+      required: [programmeSlug, adapter, source, features]
+      properties:
+        programmeSlug: { type: string }
+        adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
+        source: { type: object }
+        features: { type: array, items: { type: object } }
+    ContentDraft:
+      type: object
+      required: [key, locale, value]
+      properties:
+        contentId: { type: string, format: uuid }
+        key: { type: string }
+        locale: { type: string }
+        fallbackLocale: { type: string, nullable: true }
+        value: { type: string }
+    PolicyDraft:
+      type: object
+      required: [type, name, schema]
+      properties:
+        draftId: { type: string, format: uuid }
+        type: { type: string, enum: [RULES, AWARD] }
+        name: { type: string }
+        schema: { type: object, description: Programme-owned policy schema; MyOTA does not prescribe its fields. }
+        effectiveFrom: { type: string, format: date-time, nullable: true }
+    ReviewDecision:
+      type: object
+      required: [decision, reviewerId]
+      properties:
+        decision: { type: string, enum: [APPROVED, CHANGES_REQUESTED] }
+        reviewerId: { type: string }
+        note: { type: string }
+    PublicationRequest:
+      type: object
+      required: [effectiveFrom, publisherId]
+      properties:
+        effectiveFrom: { type: string, format: date-time }
+        publisherId: { type: string }
+    GeometryEdit:
+      type: object
+      required: [geometry, editorId]
+      properties:
+        geometry:
+          type: object
+          required: [type, coordinates]
+          properties:
+            type: { type: string, enum: [Point, Polygon, MultiPolygon] }
+            coordinates: { type: array }
+        editorId: { type: string }
+        note: { type: string }
+    Activation:
+      type: object
+      required: [programmeSlug, entityId, operatorId, startedAt]
+      properties:
+        programmeSlug: { type: string }
+        entityId: { type: string, format: uuid }
+        operatorId: { type: string, format: uuid }
+        startedAt: { type: string, format: date-time }
