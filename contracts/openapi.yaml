@@ -10,6 +10,7 @@ tags:
   - name: Programmes
   - name: Geodata
   - name: Activity
+  - name: Awards
 paths:
   /v1/identity/auth/register:
     post:
@@ -277,6 +278,116 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/Activation' } } }
       responses: { '201': { description: Created } }
+  /v1/awards:
+    get:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: List programme-owned award definitions
+      parameters:
+        - { in: query, name: programme, schema: { type: string } }
+        - { in: query, name: category, schema: { type: string, enum: [HUNTER, ACTIVATOR] } }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Award definition page } }
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Save a draft programme-owned award definition
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardDefinition' } } }
+      responses: { '201': { description: Draft award created } }
+  /v1/awards/{awardId}:
+    get:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Get an award definition
+      parameters: [{ $ref: '#/components/parameters/AwardId' }]
+      responses: { '200': { description: Award definition } }
+  /v1/awards/{awardId}/submit:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Submit an award definition for review
+      parameters: [{ $ref: '#/components/parameters/AwardId' }]
+      responses: { '200': { description: Award submitted } }
+  /v1/awards/{awardId}/review:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Approve or return an award definition for changes
+      parameters: [{ $ref: '#/components/parameters/AwardId' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardReview' } } }
+      responses: { '200': { description: Review recorded } }
+  /v1/awards/{awardId}/publish:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Publish an approved award with an effective date
+      parameters: [{ $ref: '#/components/parameters/AwardId' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardPublication' } } }
+      responses: { '200': { description: Award published } }
+  /v1/awards/assets:
+    get:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: List registered background and signature assets
+      responses: { '200': { description: Asset page } }
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Register an image asset stored in S3-compatible object storage
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardAsset' } } }
+      responses: { '201': { description: Asset registered } }
+  /v1/awards/evaluate:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Evaluate award conditions and eligible levels for a subject
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardEvaluationRequest' } } }
+      responses: { '200': { description: Evaluation result } }
+  /v1/awards/requests:
+    get:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: List award requests
+      parameters:
+        - { in: query, name: subjectId, schema: { type: string, format: uuid } }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Award request page } }
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Request an eligible award level
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardRequest' } } }
+      responses: { '201': { description: Award request created } }
+  /v1/awards/requests/{requestId}/issue:
+    post:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: Issue and permanently record a certificate request
+      parameters: [{ $ref: '#/components/parameters/RequestId' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AwardIssuanceRequest' } } }
+      responses: { '201': { description: Award issuance created } }
+  /v1/awards/issuances:
+    get:
+      tags: [Awards]
+      security: [{ bearerAuth: [] }]
+      summary: List permanent award issuance records
+      responses: { '200': { description: Award issuance page } }
 components:
   securitySchemes:
     bearerAuth:
@@ -302,6 +413,16 @@ components:
     CallsignId:
       in: path
       name: callsignId
+      required: true
+      schema: { type: string, format: uuid }
+    AwardId:
+      in: path
+      name: awardId
+      required: true
+      schema: { type: string, format: uuid }
+    RequestId:
+      in: path
+      name: requestId
       required: true
       schema: { type: string, format: uuid }
     Page:
@@ -417,3 +538,122 @@ components:
         entityId: { type: string, format: uuid }
         operatorId: { type: string, format: uuid }
         startedAt: { type: string, format: date-time }
+    AwardCondition:
+      description: Programme-owned recursive AND/OR condition tree.
+      oneOf:
+        - type: object
+          required: [kind, conditions]
+          properties:
+            kind: { type: string, enum: [AND, OR, ALL, ANY] }
+            conditions: { type: array, items: { $ref: '#/components/schemas/AwardCondition' }, minItems: 1 }
+        - type: object
+          required: [kind, operator, value]
+          properties:
+            kind: { type: string, enum: [QSO_COUNT, ACTIVATION_COUNT, UNIQUE_CALLSIGNS, UNIQUE_ENTITIES, FIELD] }
+            field: { type: string }
+            operator: { type: string, enum: [GTE, GT, EQ, LTE, LT] }
+            value: { type: number }
+        - type: object
+          required: [kind, values]
+          properties:
+            kind: { type: string, enum: [ENTITY_TYPE] }
+            values: { type: array, items: { type: string }, minItems: 1 }
+        - type: object
+          required: [kind, condition]
+          properties:
+            kind: { type: string, enum: [NOT] }
+            condition: { $ref: '#/components/schemas/AwardCondition' }
+    AwardLevel:
+      type: object
+      required: [id, name, threshold]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        threshold: { type: number, exclusiveMinimum: 0 }
+    AwardAsset:
+      type: object
+      required: [kind, name, objectKey, mediaType, widthPx, heightPx]
+      properties:
+        assetId: { type: string, format: uuid }
+        kind: { type: string, enum: [BACKGROUND, SIGNATURE] }
+        name: { type: string }
+        objectKey: { type: string }
+        mediaType: { type: string, pattern: '^image/' }
+        widthPx: { type: integer, minimum: 1 }
+        heightPx: { type: integer, minimum: 1 }
+        sha256: { type: string }
+        bucket: { type: string }
+    AwardTemplateElement:
+      type: object
+      required: [kind, x, y, width, height]
+      properties:
+        kind: { type: string, enum: [AWARD_NAME, CALLSIGN, PERSON_NAME, DATE_OBTAINED, MANAGER_NAME, MANAGER_SIGNATURE] }
+        x: { type: number, minimum: 0, maximum: 1 }
+        y: { type: number, minimum: 0, maximum: 1 }
+        width: { type: number, exclusiveMinimum: 0, maximum: 1 }
+        height: { type: number, exclusiveMinimum: 0, maximum: 1 }
+        style: { type: object }
+    AwardTemplate:
+      type: object
+      required: [elements]
+      properties:
+        elements: { type: array, minItems: 6, items: { $ref: '#/components/schemas/AwardTemplateElement' } }
+    AwardPrintSpec:
+      type: object
+      properties:
+        page: { type: string, enum: [A4, LETTER], default: A4 }
+        orientation: { type: string, enum: [PORTRAIT, LANDSCAPE], default: PORTRAIT }
+        dpi: { type: integer, minimum: 150, default: 300 }
+    AwardDefinition:
+      type: object
+      required: [programmeSlug, code, name, category, condition, levels, backgroundAsset, template]
+      properties:
+        awardId: { type: string, format: uuid }
+        programmeSlug: { type: string }
+        code: { type: string }
+        name: { type: string }
+        description: { type: string }
+        category: { type: string, enum: [HUNTER, ACTIVATOR] }
+        achievementMetric: { type: string, enum: [QSO_COUNT, ACTIVATION_COUNT, UNIQUE_CALLSIGNS, UNIQUE_ENTITIES] }
+        condition: { $ref: '#/components/schemas/AwardCondition' }
+        levels: { type: array, minItems: 1, items: { $ref: '#/components/schemas/AwardLevel' } }
+        backgroundAsset: { $ref: '#/components/schemas/AwardAsset' }
+        printSpec: { $ref: '#/components/schemas/AwardPrintSpec' }
+        template: { $ref: '#/components/schemas/AwardTemplate' }
+    AwardReview:
+      type: object
+      required: [decision, reviewerId]
+      properties:
+        decision: { type: string, enum: [APPROVED, CHANGES_REQUESTED] }
+        reviewerId: { type: string }
+        note: { type: string }
+    AwardPublication:
+      type: object
+      required: [effectiveFrom, publisherId]
+      properties:
+        effectiveFrom: { type: string, format: date-time }
+        publisherId: { type: string }
+    AwardEvaluationRequest:
+      type: object
+      required: [awardId, subjectId, facts]
+      properties:
+        awardId: { type: string, format: uuid }
+        subjectId: { type: string, format: uuid }
+        facts: { type: object, additionalProperties: true }
+    AwardRequest:
+      type: object
+      required: [awardId, levelId, subjectId, callsign, personName, facts]
+      properties:
+        awardId: { type: string, format: uuid }
+        levelId: { type: string }
+        subjectId: { type: string, format: uuid }
+        callsign: { type: string }
+        personName: { type: string }
+        facts: { type: object, additionalProperties: true }
+    AwardIssuanceRequest:
+      type: object
+      required: [managerName, signatureAssetId]
+      properties:
+        managerName: { type: string }
+        signatureAssetId: { type: string, format: uuid }
+        dateObtained: { type: string, format: date-time }
