@@ -383,6 +383,18 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/GeoImport' } } }
       responses: { '202': { description: Import accepted } }
+  /v1/geodata/imports/{runId}:
+    get:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Get geodata import status and summary
+      parameters:
+        - { in: path, name: runId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Import status, processing counts, source manifest, and errors
+          content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportRun' } } }
+        '404': { description: Import run not found }
   /v1/geodata/imports/upload:
     post:
       tags: [Geodata]
@@ -939,6 +951,26 @@ components:
         source: { type: object }
         filename: { type: string }
         contentBase64: { type: string, format: byte }
+    GeoImportRun:
+      type: object
+      required: [id, status, adapter, format, entityTypes]
+      properties:
+        id: { type: string, format: uuid }
+        programmeSlug: { type: string, nullable: true }
+        adapter: { type: string }
+        format: { type: string }
+        filename: { type: string, nullable: true }
+        entityType: { type: string, description: Primary compatibility category code }
+        entityTypes: { type: array, items: { type: string } }
+        source: { type: object, additionalProperties: true }
+        status: { type: string, enum: [QUEUED, PROCESSING, COMPLETED, COMPLETED_WITH_ERRORS, FAILED] }
+        queuedAt: { type: string, format: date-time }
+        startedAt: { type: string, format: date-time, nullable: true }
+        completedAt: { type: string, format: date-time, nullable: true }
+        featureCount: { type: integer, nullable: true }
+        stats: { type: object, additionalProperties: { type: integer } }
+        manifest: { type: object, nullable: true, additionalProperties: true }
+        errors: { type: array, items: { type: object, additionalProperties: true } }
     GeoEntity:
       type: object
       required: [id, name, status, geometry]
