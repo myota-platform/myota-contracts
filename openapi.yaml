@@ -750,12 +750,12 @@ components:
         oidc: { type: object, nullable: true }
     GeoImport:
       type: object
-      required: [programmeSlug, adapter, source, entityType]
+      required: [adapter, source, entityType]
       properties:
-        programmeSlug: { type: string }
+        programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide import. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
-        entityType: { type: string, description: Programme-assigned category; every imported entity is written as CANDIDATE. }
+        entityType: { type: string, description: Shared Master data category code; every imported entity is written as CANDIDATE. }
         source:
           type: object
           required: [name, license]
@@ -774,21 +774,22 @@ components:
         filename: { type: string }
     GeoImportUpload:
       type: object
-      required: [programmeSlug, adapter, source, entityType, filename, contentBase64]
+      required: [adapter, source, entityType, filename, contentBase64]
       properties:
-        programmeSlug: { type: string }
+        programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide import. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
-        entityType: { type: string }
+        entityType: { type: string, description: Shared Master data category code. }
         source: { type: object }
         filename: { type: string }
         contentBase64: { type: string, format: byte }
     RefreshSchedule:
       type: object
-      required: [programmeSlug, adapter, source, intervalSeconds]
+      required: [adapter, source, entityType, intervalSeconds]
       properties:
-        programmeSlug: { type: string }
+        programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide refresh. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
+        entityType: { type: string, description: Shared Master data category code. }
         source: { type: object }
         intervalSeconds: { type: integer, minimum: 300 }
         disappearancePolicy: { type: string, enum: [UNCHANGED, STALE, RETIRED, REVIEW_REQUIRED] }

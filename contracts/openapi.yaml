@@ -858,33 +858,33 @@ components:
         oidc: { type: object, nullable: true }
     GeoImport:
       type: object
-      required: [programmeSlug, adapter, source, entityType]
+      required: [adapter, source, entityType]
       properties:
-        programmeSlug: { type: string }
+        programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide import. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
-        entityType: { type: string }
+        entityType: { type: string, description: Shared Master data category code; every imported entity is written as CANDIDATE. }
         source: { type: object }
         features: { type: array, items: { type: object } }
         content: { type: string }
         filename: { type: string }
     GeoImportUpload:
       type: object
-      required: [programmeSlug, adapter, source, entityType, filename, contentBase64]
+      required: [adapter, source, entityType, filename, contentBase64]
       properties:
-        programmeSlug: { type: string }
+        programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide import. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
-        entityType: { type: string }
+        entityType: { type: string, description: Shared Master data category code. }
         source: { type: object }
         filename: { type: string }
         contentBase64: { type: string, format: byte }
     GeoEntity:
       type: object
-      required: [id, programmeSlug, name, status, geometry]
+      required: [id, name, status, geometry]
       properties:
         id: { type: string, format: uuid }
-        programmeSlug: { type: string }
+        programmeSlug: { type: string, nullable: true, description: Optional programme eligibility assignment. }
         entityType: { type: string }
         name: { type: string }
         status: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED, RETIRED] }
