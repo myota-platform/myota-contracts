@@ -404,7 +404,7 @@ paths:
               type: object
               required: [geometryType, editorId]
               properties:
-                geometryType: { type: string, enum: [POINT, WAY, POLYGON] }
+                geometryType: { type: string, enum: [POINT, LINESTRING, MULTILINESTRING, POLYGON, MULTIPOLYGON, WAY] }
                 editorId: { type: string }
                 note: { type: string }
       responses: { '200': { description: Geometry type changed and audited } }
@@ -787,12 +787,13 @@ components:
         oidc: { type: object, nullable: true }
     EntityType:
       type: object
-      required: [code, label, geometry]
+      required: [code, label, geometryTypes]
       properties:
         code: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$', description: Stable shared category code; it cannot be renamed. }
         originalCode: { type: string }
         label: { type: string }
-        geometry: { type: string, enum: [POINT, LINESTRING, POLYGON, MULTIPOLYGON] }
+        geometry: { type: string, enum: [POINT, LINESTRING, MULTILINESTRING, POLYGON, MULTIPOLYGON], deprecated: true, description: Legacy single geometry value; use geometryTypes. }
+        geometryTypes: { type: array, minItems: 1, uniqueItems: true, items: { type: string, enum: [POINT, LINESTRING, MULTILINESTRING, POLYGON, MULTIPOLYGON] }, description: GeoJSON geometry types accepted by this category. }
         description: { type: string }
         active: { type: boolean, default: true }
     EntityTypeAssignment:
