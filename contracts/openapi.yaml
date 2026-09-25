@@ -359,6 +359,31 @@ paths:
         content:
           application/json: { schema: { $ref: '#/components/schemas/GeoImport' } }
       responses: { '202': { description: Import accepted } }
+  /v1/geodata/imports:
+    get:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: List geodata import runs
+      responses: { '200': { description: Import runs } }
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Paste a text source document and queue candidate import
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/GeoImport' } } }
+      responses: { '202': { description: Import accepted } }
+  /v1/geodata/imports/upload:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Upload a binary or text source document and queue candidate import
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportUpload' } } }
+      responses: { '202': { description: Upload stored and import queued } }
   /v1/geodata/location-options:
     get:
       tags: [Geodata]
@@ -435,14 +460,28 @@ paths:
     post:
       tags: [Geodata]
       security: [{ bearerAuth: [] }]
-      summary: Permanently delete a rejected entity and its audit record
+      summary: Permanently delete an entity and its audit record; global deletion also requires activity cascade first
       parameters:
         - $ref: '#/components/parameters/EntityId'
         - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content: { application/json: { schema: { type: object, required: [deletedBy], properties: { deletedBy: { type: string } } } } }
-      responses: { '204': { description: Rejected entity and audit record deleted } }
+      responses: { '204': { description: Entity and audit record deleted } }
+  /v1/activations/admin/entities/{entityId}/deletion-impact:
+    get:
+      tags: [Activity]
+      security: [{ bearerAuth: [] }]
+      summary: Calculate the QSO and award impact of deleting an entity
+      parameters: [{ $ref: '#/components/parameters/EntityId' }]
+      responses: { '200': { description: Deletion impact } }
+  /v1/activations/admin/entities/{entityId}/cascade-delete:
+    post:
+      tags: [Activity]
+      security: [{ bearerAuth: [] }]
+      summary: Delete linked valid QSOs and queue award recalculation
+      parameters: [{ $ref: '#/components/parameters/EntityId' }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      responses: { '200': { description: QSO cascade and award recalculation result } }
   /v1/activations:
     get:
       tags: [Activity]
@@ -819,12 +858,27 @@ components:
         oidc: { type: object, nullable: true }
     GeoImport:
       type: object
-      required: [programmeSlug, adapter, source, features]
+      required: [programmeSlug, adapter, source, entityType]
       properties:
         programmeSlug: { type: string }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
+        format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
+        entityType: { type: string }
         source: { type: object }
         features: { type: array, items: { type: object } }
+        content: { type: string }
+        filename: { type: string }
+    GeoImportUpload:
+      type: object
+      required: [programmeSlug, adapter, source, entityType, filename, contentBase64]
+      properties:
+        programmeSlug: { type: string }
+        adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
+        format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
+        entityType: { type: string }
+        source: { type: object }
+        filename: { type: string }
+        contentBase64: { type: string, format: byte }
     GeoEntity:
       type: object
       required: [id, programmeSlug, name, status, geometry]
