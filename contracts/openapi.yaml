@@ -327,7 +327,16 @@ paths:
           schema: { type: string }
         - in: query
           name: status
-          schema: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED] }
+          description: Repeat or comma-separate values for a multi-status filter; omit for all statuses.
+          style: form
+          explode: true
+          schema: { type: array, items: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, RETIRED, REJECTED] } }
+        - { in: query, name: entityType, schema: { type: string } }
+        - { in: query, name: continent, schema: { type: string } }
+        - { in: query, name: country, schema: { type: string } }
+        - { in: query, name: region, description: Provider-derived first subdivision / region name., schema: { type: string } }
+        - { in: query, name: province, schema: { type: string } }
+        - { in: query, name: city, description: Matches either city or municipality., schema: { type: string } }
         - { in: query, name: minLon, schema: { type: number, format: double } }
         - { in: query, name: minLat, schema: { type: number, format: double } }
         - { in: query, name: maxLon, schema: { type: number, format: double } }
