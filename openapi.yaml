@@ -494,6 +494,16 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/GeometryEdit' } } }
       responses: { '200': { description: Geometry saved with audit history } }
+  /v1/geodata/entities/{entityId}/location:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Save manual location metadata and its provider precedence
+      parameters: [{ $ref: '#/components/parameters/EntityId' }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/LocationMetadataEdit' } } }
+      responses: { '200': { description: Location metadata saved and audited } }
   /v1/activations:
     get:
       tags: [Activity]
@@ -735,6 +745,33 @@ components:
           properties:
             type: { type: string, enum: [Point, Polygon, MultiPolygon] }
             coordinates: { type: array }
+        editorId: { type: string }
+        note: { type: string }
+    LocationMetadata:
+      type: object
+      additionalProperties: false
+      properties:
+        continent: { type: string, nullable: true }
+        continentCode: { type: string, nullable: true }
+        country: { type: string, nullable: true }
+        countryCode: { type: string, nullable: true }
+        region: { type: string, nullable: true }
+        regionCode: { type: string, nullable: true }
+        subdivision: { type: string, nullable: true }
+        subdivisionCode: { type: string, nullable: true }
+        province: { type: string, nullable: true }
+        provinceCode: { type: string, nullable: true }
+        county: { type: string, nullable: true }
+        countyCode: { type: string, nullable: true }
+        city: { type: string, nullable: true }
+        municipality: { type: string, nullable: true }
+        locality: { type: string, nullable: true }
+    LocationMetadataEdit:
+      type: object
+      required: [location, editorId]
+      properties:
+        location: { allOf: [{ $ref: '#/components/schemas/LocationMetadata' }], description: Stable GeoEntity location fields; null clears a manual value. }
+        manualFields: { type: array, items: { type: string }, description: Fields that remain authoritative over reverse-geocoding refreshes. }
         editorId: { type: string }
         note: { type: string }
     EntityStatusChange:
