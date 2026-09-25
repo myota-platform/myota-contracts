@@ -341,7 +341,7 @@ paths:
     post:
       tags: [Geodata]
       security: [{ bearerAuth: [] }]
-      summary: Convert a geodata entity between point and polygon geometry
+      summary: Convert a geodata entity between point, way, and polygon geometry
       parameters:
         - $ref: '#/components/parameters/EntityId'
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -353,7 +353,7 @@ paths:
               type: object
               required: [geometryType, editorId]
               properties:
-                geometryType: { type: string, enum: [POINT, POLYGON] }
+                geometryType: { type: string, enum: [POINT, WAY, POLYGON] }
                 editorId: { type: string }
                 note: { type: string }
       responses: { '200': { description: Geometry type changed and audited } }
@@ -750,7 +750,7 @@ components:
         entityType: { type: string }
         name: { type: string }
         status: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED, RETIRED] }
-        geometry: { type: object, additionalProperties: true }
+        geometry: { type: object, additionalProperties: true, description: GeoJSON geometry. Ways use type LineString; the import API also accepts the non-standard geometry type alias way and normalizes it to LineString. }
         centroid: { type: object, additionalProperties: true }
         continent: { type: string, nullable: true }
         continentCode: { type: string, nullable: true, description: ISO-style continent code from the geocoder }

@@ -750,8 +750,8 @@ components:
           type: object
           required: [type, coordinates]
           properties:
-            type: { type: string, enum: [Point, Polygon, MultiPolygon] }
-            coordinates: { type: array }
+            type: { type: string, enum: [Point, LineString, Polygon, MultiPolygon] }
+            coordinates: { type: array, description: For a way, an ordered list of at least two WGS84 longitude/latitude positions. }
         editorId: { type: string }
         note: { type: string }
     LocationMetadata:
