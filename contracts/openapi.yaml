@@ -861,8 +861,18 @@ components:
         code: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$', description: Shared category code to assign or unassign. }
     EntityTypeChange:
       type: object
-      required: [entityType, editorId]
+      required: [entityTypes, editorId]
       properties:
+        entityTypes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        entityTypeCodes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
         entityType: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
         editorId: { type: string }
         note: { type: string }
@@ -884,24 +894,48 @@ components:
         oidc: { type: object, nullable: true }
     GeoImport:
       type: object
-      required: [adapter, source, entityType]
+      required: [adapter, source, entityTypes]
       properties:
         programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide import. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
-        entityType: { type: string, description: Shared Master data category code; every imported entity is written as CANDIDATE. }
+        entityTypes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Shared Master data category codes; every imported entity is written as CANDIDATE. The first code is the primary compatibility entityType.
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        entityTypeCodes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Compatibility alias for entityTypes.
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        entityType: { type: string, deprecated: true, description: Deprecated single-category compatibility input; use entityTypes. }
         source: { type: object }
         features: { type: array, items: { type: object } }
         content: { type: string }
         filename: { type: string }
     GeoImportUpload:
       type: object
-      required: [adapter, source, entityType, filename, contentBase64]
+      required: [adapter, source, entityTypes, filename, contentBase64]
       properties:
         programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide import. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
-        entityType: { type: string, description: Shared Master data category code. }
+        entityTypes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Shared Master data category codes; imports are programme-independent and always create candidates.
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        entityTypeCodes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Compatibility alias for entityTypes.
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        entityType: { type: string, deprecated: true, description: Deprecated single-category compatibility input; use entityTypes. }
         source: { type: object }
         filename: { type: string }
         contentBase64: { type: string, format: byte }
@@ -912,6 +946,16 @@ components:
         id: { type: string, format: uuid }
         programmeSlug: { type: string, nullable: true, description: Optional programme eligibility assignment. }
         entityType: { type: string }
+        entityTypes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        entityTypeCodes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
         name: { type: string }
         status: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED, RETIRED] }
         geometry: { type: object, additionalProperties: true, description: GeoJSON geometry. Ways use type LineString; the import API also accepts the non-standard geometry type alias way and normalizes it to LineString. }

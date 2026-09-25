@@ -5,6 +5,13 @@ in `python/myota_client.py` is a dependency-light client for local integration;
 production SDKs should be regenerated in CI with the pinned OpenAPI Generator
 version selected by the consuming repository.
 
+Geodata payloads use the shared Master data category catalogue: `entityTypes` is
+an ordered, non-empty list, `entityTypeCodes` is a compatibility alias, and
+singular `entityType` is deprecated. The first category remains the compatibility
+primary; all category assignments are authoritative in the geodata service
+relation. Imports do not require a programme and always produce candidate
+entities.
+
 Compatibility rules:
 
 - Additive request/response fields are compatible within `/v1`.

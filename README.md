@@ -7,12 +7,14 @@ This repository is a runnable vertical-slice bootstrap for the service repositor
 ## What works now
 
 - Amateur-radio-aware identity: operator/SWL participation, multiple callsigns, one primary callsign, lifecycle and verification fields.
-- Programme configuration: programme-owned entity types, rules, minimum QSOs, awards, theme and optional OIDC settings.
+- Shared entity-category catalogue and programme assignments; programme-owned rules, minimum QSOs, awards, themes and optional OIDC settings.
 - Geodata lifecycle: imported candidate → community proposal → approver review → approved entity.
 - Provenance-aware imports with adapter metadata for ParkServe, OSM, government GIS and manual proposals.
 - Activation and QSO primitives with idempotency keys and audit events.
 - Universal themed frontend with verified/candidate map distinction.
 - OpenAPI and event contracts, ADRs, migration notes, health endpoints and local deployment manifests.
+
+The OpenAPI document is the canonical cross-service contract. Geodata imports and manual proposals accept one or more shared `entityTypes`; the first ordered code is retained as the legacy primary `entityType`, while the relational assignment set is authoritative. Imports are programme-independent and always create candidate entities. Programme assignment and programme-specific eligibility remain separate concerns.
 
 The default test/runtime adapter is in-memory so the slice can be exercised without third-party Python packages. PostgreSQL/PostGIS is the production storage target and is defined in `db/migrations/`.
 
