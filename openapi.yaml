@@ -582,6 +582,16 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/EntityTypeChange' } } }
       responses: { '200': { description: Category changed and audited } }
+  /v1/geodata/entities/{entityId}/name:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Change an entity display name and record an audit entry
+      parameters: [{ $ref: '#/components/parameters/EntityId' }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/EntityNameChange' } } }
+      responses: { '200': { description: Name changed and audited } }
   /v1/activations:
     get:
       tags: [Activity]
@@ -737,6 +747,13 @@ components:
       required: [entityType, editorId]
       properties:
         entityType: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        editorId: { type: string }
+        note: { type: string }
+    EntityNameChange:
+      type: object
+      required: [name, editorId]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 240 }
         editorId: { type: string }
         note: { type: string }
     ProgrammeUpdate:
