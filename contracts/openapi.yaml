@@ -308,6 +308,16 @@ paths:
         content:
           application/json: { schema: { $ref: '#/components/schemas/GeoImport' } }
       responses: { '202': { description: Import accepted } }
+  /v1/geodata/location-options:
+    get:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: List provider-derived location hierarchy options
+      description: Values are aggregated from stored BigDataCloud reverse-geocoding responses; this endpoint does not issue remote lookups.
+      responses:
+        '200':
+          description: Searchable continent, country, subdivision, and province hierarchy
+          content: { application/json: { schema: { $ref: '#/components/schemas/LocationOptions' } } }
   /v1/geodata/entities/{entityId}/review:
     post:
       tags: [Geodata]
@@ -781,6 +791,44 @@ components:
         city: { type: string, nullable: true }
         municipality: { type: string, nullable: true }
         locality: { type: string, nullable: true }
+    LocationOptions:
+      type: object
+      required: [provider, continents]
+      properties:
+        provider: { type: string, example: BIGDATACLOUD }
+        codeStandards: { type: object, additionalProperties: { type: string } }
+        continents:
+          type: array
+          items:
+            type: object
+            required: [name, countries]
+            properties:
+              name: { type: string }
+              code: { type: string, nullable: true }
+              countries:
+                type: array
+                items:
+                  type: object
+                  required: [name, subdivisions]
+                  properties:
+                    name: { type: string }
+                    code: { type: string, nullable: true }
+                    subdivisions:
+                      type: array
+                      items:
+                        type: object
+                        required: [name, provinces]
+                        properties:
+                          name: { type: string }
+                          code: { type: string, nullable: true }
+                          provinces:
+                            type: array
+                            items:
+                              type: object
+                              required: [name]
+                              properties:
+                                name: { type: string }
+                                code: { type: string, nullable: true }
     LocationMetadataEdit:
       type: object
       required: [location, editorId]
@@ -791,7 +839,7 @@ components:
           description: Stable GeoEntity location fields; null clears a manual value.
         manualFields:
           type: array
-          items: { type: string }
+          items: { type: string, enum: [continent, country, region, subdivision, province, county, city, municipality, locality] }
           description: Fields that remain authoritative over reverse-geocoding refreshes.
         editorId: { type: string }
         note: { type: string }
