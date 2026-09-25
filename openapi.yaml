@@ -203,22 +203,57 @@ paths:
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/ProgrammeUpdate' } } }
       responses: { '200': { description: Updated programme } }
+  /v1/entity-types:
+    get:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: List shared entity category master data
+      responses: { '200': { description: Shared entity category catalogue } }
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Create or update a shared entity category definition
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/EntityType' } } }
+      responses: { '200': { description: Updated category }, '201': { description: Created category } }
   /v1/programmes/{slug}/entity-types:
     get:
       tags: [Programmes]
       security: [{ bearerAuth: [] }]
-      summary: List the programme-owned entity categories
+      summary: List entity categories assigned to the programme
       parameters: [{ in: path, name: slug, required: true, schema: { type: string } }]
       responses: { '200': { description: Entity category catalogue } }
     post:
       tags: [Programmes]
       security: [{ bearerAuth: [] }]
-      summary: Create or update a programme-owned entity category
+      summary: Legacy category upsert and assignment compatibility endpoint
       parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { $ref: '#/components/parameters/IdempotencyKey' }]
       requestBody:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/EntityType' } } }
       responses: { '200': { description: Updated category }, '201': { description: Created category } }
+  /v1/programmes/{slug}/entity-types/assign:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Assign a shared entity category to a programme
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/EntityTypeAssignment' } } }
+      responses: { '200': { description: Updated programme assignments } }
+  /v1/programmes/{slug}/entity-types/unassign:
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Remove a shared entity category from a programme
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/EntityTypeAssignment' } } }
+      responses: { '200': { description: Updated programme assignments } }
   /v1/programmes/{slug}/archive:
     post:
       tags: [Programmes]
@@ -675,12 +710,17 @@ components:
       type: object
       required: [code, label, geometry]
       properties:
-        code: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$', description: Stable programme-owned category code; it cannot be renamed. }
+        code: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$', description: Stable shared category code; it cannot be renamed. }
         originalCode: { type: string }
         label: { type: string }
         geometry: { type: string, enum: [POINT, LINESTRING, POLYGON, MULTIPOLYGON] }
         description: { type: string }
         active: { type: boolean, default: true }
+    EntityTypeAssignment:
+      type: object
+      required: [code]
+      properties:
+        code: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$', description: Shared category code to assign or unassign. }
     EntityTypeChange:
       type: object
       required: [entityType, editorId]
