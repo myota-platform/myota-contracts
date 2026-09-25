@@ -254,6 +254,22 @@ paths:
       requestBody:
         content: { application/json: { schema: { $ref: '#/components/schemas/ProgrammeUpdate' } } }
       responses: { '200': { description: Updated programme } }
+  /v1/programmes/{slug}/entity-types:
+    get:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: List the programme-owned entity categories
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }]
+      responses: { '200': { description: Entity category catalogue } }
+    post:
+      tags: [Programmes]
+      security: [{ bearerAuth: [] }]
+      summary: Create or update a programme-owned entity category
+      parameters: [{ in: path, name: slug, required: true, schema: { type: string } }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/EntityType' } } }
+      responses: { '200': { description: Updated category }, '201': { description: Created category } }
   /v1/programmes/{slug}/archive:
     post:
       tags: [Programmes]
@@ -370,6 +386,16 @@ paths:
         content:
           application/json: { schema: { $ref: '#/components/schemas/LocationMetadataEdit' } }
       responses: { '200': { description: Location metadata saved and audited } }
+  /v1/geodata/entities/{entityId}/entity-type:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Change an entity category and record an audit entry
+      parameters: [{ $ref: '#/components/parameters/EntityId' }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/EntityTypeChange' } } }
+      responses: { '200': { description: Category changed and audited } }
   /v1/geodata/entities/{entityId}/delete:
     post:
       tags: [Geodata]
@@ -724,6 +750,23 @@ components:
         rules: { type: object }
         theme: { type: object }
         oidc: { type: object, nullable: true }
+    EntityType:
+      type: object
+      required: [code, label, geometry]
+      properties:
+        code: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$', description: Stable programme-owned category code; it cannot be renamed. }
+        originalCode: { type: string }
+        label: { type: string }
+        geometry: { type: string, enum: [POINT, LINESTRING, POLYGON, MULTIPOLYGON] }
+        description: { type: string }
+        active: { type: boolean, default: true }
+    EntityTypeChange:
+      type: object
+      required: [entityType, editorId]
+      properties:
+        entityType: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+        editorId: { type: string }
+        note: { type: string }
     ProgrammeUpdate:
       type: object
       properties:
