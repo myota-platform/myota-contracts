@@ -813,9 +813,9 @@ components:
         enabled: { type: boolean, default: true }
     ManualProposal:
       type: object
-      required: [programmeSlug, feature]
+      required: [feature]
       properties:
-        programmeSlug: { type: string }
+        programmeSlug: { type: string, nullable: true, description: Optional programme eligibility assignment; omit for a platform-wide candidate. }
         source: { type: object }
         feature: { type: object }
         attachments: { type: array, items: { $ref: '#/components/schemas/AttachmentMetadata' } }
