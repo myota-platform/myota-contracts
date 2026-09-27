@@ -825,7 +825,7 @@ components:
         programmeSlug: { type: string, nullable: true, description: Legacy optional scope; omit for a platform-wide import. }
         adapter: { type: string, enum: [PARKSERVE_US, OSM, GOVERNMENT_GIS, MANUAL] }
         format: { type: string, enum: [GEOJSON, KML, GPX, WFS, SHAPEFILE, SHP, ARCGIS_FEATURESERVER, OSM_PBF, PARKSERVE_US] }
-        entityType: { type: string, description: Shared Master data category code; every imported entity is written as CANDIDATE. }
+        entityType: { type: string, description: Shared Master data category code; imports are pre-processed before explicit CANDIDATE or APPROVED promotion. }
         source:
           type: object
           required: [name, license]
