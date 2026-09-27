@@ -1,22 +1,22 @@
-# MyOTA Outdoor Activation Platform
+# MyOTA contracts
 
 MyOTA is a programme-agnostic platform for outdoor activation programmes. MPOTA is represented as a configured programme, not as the platform itself. No rules or charter text are copied from POTA or any other programme: every programme supplies its own configuration, policy, eligibility, awards and public charter.
 
-This repository is a runnable vertical-slice bootstrap for the service repositories described in [`docs/repository-map.md`](docs/repository-map.md). It contains four independently runnable Python services, an API-first contract, a universal browser UI, PostGIS migrations, and Kubernetes/Helm deployment assets.
+This repository is the API-first contract boundary for MyOTA. It owns the
+versioned OpenAPI document, event envelopes, compatibility rules, and
+dependency-light generated client used by the local integration slice.
 
 ## What works now
 
-- Amateur-radio-aware identity: operator/SWL participation, multiple callsigns, one primary callsign, lifecycle and verification fields.
-- Shared entity-category catalogue and programme assignments; programme-owned rules, minimum QSOs, awards, themes and optional OIDC settings.
-- Geodata lifecycle: imported candidate → community proposal → approver review → approved entity.
-- Provenance-aware imports with adapter metadata for ParkServe, OSM, government GIS and manual proposals.
-- Activation and QSO primitives with idempotency keys and audit events.
-- Universal themed frontend with verified/candidate map distinction.
-- OpenAPI and event contracts, ADRs, migration notes, health endpoints and local deployment manifests.
+- Contracts expose reusable capabilities without embedding the charter,
+  eligibility, award thresholds, or rules of MPOTA, POTA, or another
+  programme.
 
 The OpenAPI document is the canonical cross-service contract. Geodata imports and manual proposals accept one or more shared `entityTypes`; the first ordered code is retained as the legacy primary `entityType`, while the relational assignment set is authoritative. Imports are programme-independent and always create candidate entities. Programme assignment and programme-specific eligibility remain separate concerns.
 
-The default test/runtime adapter is in-memory so the slice can be exercised without third-party Python packages. PostgreSQL/PostGIS is the production storage target and is defined in `db/migrations/`.
+The contract repository does not own runtime services or database migrations.
+Deployment and service ownership are documented in the
+[repository map](https://github.com/myota-platform/myota-docs/blob/main/docs/repository-map.md).
 
 ## Run the vertical slice
 
@@ -25,13 +25,18 @@ python3 -m unittest discover -s tests -v
 python3 services/dev_server.py
 ```
 
-Open <http://127.0.0.1:8080>. The dev server starts the four services on ports 8001–8004 and proxies the browser API calls. It is intentionally dependency-free.
+Contract-focused tests run without the full service stack. Use myota-deploy
+with Colima for an end-to-end API test.
 
-For a containerized PostGIS environment, use `docker compose up --build` after starting Colima. The image uses the same service code with `SERVICE=identity|programmes|geodata|activity`.
+See the [project charter](https://github.com/myota-platform/myota-docs/blob/main/docs/project-charter.md)
+and [charter gap analysis](https://github.com/myota-platform/myota-docs/blob/main/docs/charter-gap-analysis.md)
+for the policy and product boundaries that contracts must preserve.
 
 ## Architecture
 
-Read [`docs/architecture.md`](docs/architecture.md), [`docs/adr/0001-storage-topology.md`](docs/adr/0001-storage-topology.md), and [`docs/repository-map.md`](docs/repository-map.md). The current bootstrap is kept together to make the vertical slice easy to run; the repository map defines the justified GitHub split once the MyOTA organization is available.
+The OpenAPI document is the source of truth for HTTP compatibility. CI should
+run an OpenAPI linter, client generation, and a breaking-change comparison
+against the last released contract.
 
 ## Source project
 
