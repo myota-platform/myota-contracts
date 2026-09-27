@@ -24,3 +24,8 @@ Compatibility rules:
 
 CI should run an OpenAPI linter, server/client generation, and a breaking-change
 diff against the last released contract before publishing a service image.
+
+The proposed REST resource consolidation and compatibility migration is
+documented in the
+[myota-docs REST API consolidation plan](https://github.com/myota-platform/myota-docs/blob/main/docs/api-rest-consolidation-plan.md).
+This file remains contract guidance only; no route changes have been made.

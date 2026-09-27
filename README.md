@@ -38,6 +38,12 @@ The OpenAPI document is the source of truth for HTTP compatibility. CI should
 run an OpenAPI linter, client generation, and a breaking-change comparison
 against the last released contract.
 
+The proposed route cleanup is documented in the
+[REST API consolidation plan](https://github.com/myota-platform/myota-docs/blob/main/docs/api-rest-consolidation-plan.md).
+No endpoint changes have been implemented yet. The plan also identifies the
+duplicate root OpenAPI file and the myota-platform integration copy that need
+to become generated or CI-checked mirrors.
+
 ## Source project
 
 The original `ea7klk/mpota` repository remains untouched. Its charter and planned flows are treated as the migration source; see [`docs/migration-from-mpota.md`](docs/migration-from-mpota.md).
