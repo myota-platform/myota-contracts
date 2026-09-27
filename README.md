@@ -12,7 +12,7 @@ dependency-light generated client used by the local integration slice.
   eligibility, award thresholds, or rules of MPOTA, POTA, or another
   programme.
 
-The OpenAPI document is the canonical cross-service contract. Geodata imports and manual proposals accept one or more shared `entityTypes`; the first ordered code is retained as the legacy primary `entityType`, while the relational assignment set is authoritative. Imports are programme-independent and always create candidate entities. Programme assignment and programme-specific eligibility remain separate concerns.
+The OpenAPI document is the canonical cross-service contract. Geodata imports and manual proposals accept one or more shared `entityTypes`; the first ordered code is retained as the legacy primary `entityType`, while the relational assignment set is authoritative. Imports are programme-independent and first enter durable pre-processing; administrator promotion explicitly chooses CANDIDATE or APPROVED. Programme assignment and programme-specific eligibility remain separate concerns.
 
 The contract repository does not own runtime services or database migrations.
 Deployment and service ownership are documented in the

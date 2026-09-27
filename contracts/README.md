@@ -9,7 +9,8 @@ Geodata payloads use the shared Master data category catalogue: `entityTypes` is
 an ordered, non-empty list, `entityTypeCodes` is a compatibility alias, and
 singular `entityType` is deprecated. The first category remains the compatibility
 primary; all category assignments are authoritative in the geodata service
-relation. Imports do not require a programme and always produce candidate
+relation. Imports do not require a programme and first produce pre-processed
+records; administrator promotion explicitly produces CANDIDATE or APPROVED
 entities.
 
 Compatibility rules:
