@@ -447,6 +447,36 @@ paths:
       summary: Get an import run and its source manifest
       parameters: [{ in: path, name: runId, required: true, schema: { type: string, format: uuid } }]
       responses: { '200': { description: Import run } }
+  /v1/geodata/imports/{runId}/candidates:
+    get:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: List paged pre-processed import records
+      parameters:
+        - { in: path, name: runId, required: true, schema: { type: string, format: uuid } }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses: { '200': { description: Pre-processed candidate records, content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportCandidatePage' } } } } }
+  /v1/geodata/imports/{runId}/candidates/validate:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Confirm selected pre-processed records
+      parameters: [{ in: path, name: runId, required: true, schema: { type: string, format: uuid } }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportCandidateValidation' } } }
+      responses: { '200': { description: Records confirmed } }
+  /v1/geodata/imports/{runId}/process:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Queue confirmed records for CANDIDATE or APPROVED promotion
+      parameters: [{ in: path, name: runId, required: true, schema: { type: string, format: uuid } }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportProcessingRequest' } } }
+      responses: { '202': { description: Promotion queue accepted, content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportProcessingQueue' } } } } }
   /v1/geodata/imports/upload:
     post:
       tags: [Geodata]
@@ -823,6 +853,59 @@ components:
         source: { type: object }
         filename: { type: string }
         contentBase64: { type: string, format: byte }
+    GeoImportCandidate:
+      type: object
+      required: [id, importRunId, ordinal, name, geometry, validationStatus]
+      properties:
+        id: { type: string, format: uuid }
+        importRunId: { type: string, format: uuid }
+        ordinal: { type: integer }
+        existingEntityId: { type: string, format: uuid, nullable: true }
+        name: { type: string }
+        entityTypes: { type: array, items: { type: string } }
+        geometry: { type: object, additionalProperties: true }
+        centroid: { type: object, additionalProperties: true }
+        sourceRef: { type: string, nullable: true }
+        candidateSource: { type: object, additionalProperties: true }
+        validationStatus: { type: string, enum: [PENDING, CONFIRMED, REJECTED, PROCESSED] }
+        targetStatus: { type: string, enum: [CANDIDATE, APPROVED], nullable: true }
+        processedEntityId: { type: string, format: uuid, nullable: true }
+        processedAt: { type: string, format: date-time, nullable: true }
+    GeoImportCandidatePage:
+      type: object
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/GeoImportCandidate' } }
+        page: { type: integer }
+        pageSize: { type: integer }
+        total: { type: integer }
+        nextPage: { type: integer, nullable: true }
+    GeoImportCandidateValidation:
+      type: object
+      required: [candidateIds, reviewerId]
+      properties:
+        candidateIds: { type: array, minItems: 1, items: { type: string, format: uuid } }
+        reviewerId: { type: string }
+        note: { type: string }
+    GeoImportProcessingRequest:
+      type: object
+      required: [candidateIds, targetStatus, processorId]
+      properties:
+        candidateIds: { type: array, minItems: 1, items: { type: string, format: uuid } }
+        targetStatus: { type: string, enum: [CANDIDATE, APPROVED] }
+        processorId: { type: string }
+        note: { type: string }
+    GeoImportProcessingQueue:
+      type: object
+      required: [id, importRunId, candidateIds, targetStatus, status]
+      properties:
+        id: { type: string, format: uuid }
+        importRunId: { type: string, format: uuid }
+        candidateIds: { type: array, items: { type: string, format: uuid } }
+        targetStatus: { type: string, enum: [CANDIDATE, APPROVED] }
+        requestedBy: { type: string }
+        status: { type: string, enum: [QUEUED, PROCESSING, COMPLETED, FAILED] }
+        result: { type: object, additionalProperties: true }
+        error: { type: string, nullable: true }
     RefreshSchedule:
       type: object
       required: [adapter, source, entityType, intervalSeconds]
