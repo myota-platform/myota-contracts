@@ -330,7 +330,7 @@ paths:
           description: Repeat or comma-separate values for a multi-status filter; omit for all statuses.
           style: form
           explode: true
-          schema: { type: array, items: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, RETIRED, REJECTED] } }
+          schema: { type: array, items: { type: string, enum: [CANDIDATE, APPROVED, RETIRED, REJECTED] } }
         - { in: query, name: entityType, schema: { type: string } }
         - { in: query, name: continent, schema: { type: string } }
         - { in: query, name: country, schema: { type: string } }
@@ -418,7 +418,7 @@ paths:
   /v1/geodata/entities/{entityId}/review:
     post:
       tags: [Geodata]
-      summary: Review a proposed entity
+      summary: Review a candidate entity
       parameters:
         - $ref: '#/components/parameters/EntityId'
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -989,7 +989,18 @@ components:
           uniqueItems: true
           items: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
         name: { type: string }
-        status: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, REJECTED, RETIRED] }
+        status: { type: string, enum: [CANDIDATE, APPROVED, REJECTED, RETIRED] }
+        candidateSource:
+          type: object
+          required: [type]
+          properties:
+            type: { type: string, enum: [ADAPTER_IMPORT, COMMUNITY_PROPOSAL] }
+            adapter: { type: string, nullable: true }
+            importRunId: { type: string, format: uuid, nullable: true }
+            proposalId: { type: string, format: uuid, nullable: true }
+            proposerId: { type: string, nullable: true }
+            sourceKey: { type: string, nullable: true }
+            sourceRef: { type: string, nullable: true }
         geometry: { type: object, additionalProperties: true, description: GeoJSON geometry. Ways use type LineString; the import API also accepts the non-standard geometry type alias way and normalizes it to LineString. }
         centroid: { type: object, additionalProperties: true }
         continent: { type: string, nullable: true }

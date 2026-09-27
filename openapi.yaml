@@ -377,7 +377,7 @@ paths:
           description: Repeat or comma-separate values for a multi-status filter; omit for all statuses.
           style: form
           explode: true
-          schema: { type: array, items: { type: string, enum: [CANDIDATE, PROPOSED, APPROVED, RETIRED, REJECTED] } }
+          schema: { type: array, items: { type: string, enum: [CANDIDATE, APPROVED, RETIRED, REJECTED] } }
         - in: query
           name: entityType
           schema: { type: string }
@@ -539,7 +539,7 @@ paths:
   /v1/geodata/entities/{entityId}/review:
     post:
       tags: [Geodata]
-      summary: Review a proposed entity
+      summary: Review a candidate entity
       parameters:
         - $ref: '#/components/parameters/EntityId'
         - $ref: '#/components/parameters/IdempotencyKey'
@@ -973,7 +973,7 @@ components:
       type: object
       required: [status, reviewerId]
       properties:
-        status: { type: string, enum: [APPROVED, CANDIDATE, PROPOSED, RETIRED, REJECTED] }
+        status: { type: string, enum: [APPROVED, CANDIDATE, RETIRED, REJECTED] }
         reviewerId: { type: string }
         note: { type: string }
     Activation:
