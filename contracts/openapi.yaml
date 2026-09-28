@@ -437,6 +437,22 @@ paths:
         '202':
           description: Promotion queue accepted
           content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportProcessingQueue' } } }
+  /v1/geodata/imports/{runId}/processed:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Finalize an import and discard staged records
+      description: Idempotently removes the run's pre-processed candidate and promotion-queue rows while preserving the import summary and any already materialized entities.
+      parameters:
+        - { in: path, name: runId, required: true, schema: { type: string, format: uuid } }
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportFinalization' } } }
+      responses:
+        '200':
+          description: Import finalized and staged records discarded
+          content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportRun' } } }
   /v1/geodata/imports/upload:
     post:
       tags: [Geodata]
@@ -1005,7 +1021,7 @@ components:
         entityType: { type: string, description: Primary compatibility category code }
         entityTypes: { type: array, items: { type: string } }
         source: { type: object, additionalProperties: true }
-        status: { type: string, enum: [QUEUED, PROCESSING, PREPROCESSED, PREPROCESSED_WITH_ERRORS, COMPLETED, COMPLETED_WITH_ERRORS, FAILED] }
+        status: { type: string, enum: [QUEUED, PROCESSING, PREPROCESSED, PREPROCESSED_WITH_ERRORS, COMPLETED, COMPLETED_WITH_ERRORS, FAILED, PROCESSED] }
         queuedAt: { type: string, format: date-time }
         startedAt: { type: string, format: date-time, nullable: true }
         completedAt: { type: string, format: date-time, nullable: true }
@@ -1014,6 +1030,8 @@ components:
         manifest: { type: object, nullable: true, additionalProperties: true }
         errors: { type: array, items: { type: object, additionalProperties: true } }
         candidateCounts: { type: object, additionalProperties: { type: integer } }
+        processedAt: { type: string, format: date-time, nullable: true }
+        processedBy: { type: string, nullable: true }
     GeoImportCandidate:
       type: object
       required: [id, importRunId, ordinal, name, geometry, validationStatus]
@@ -1074,6 +1092,12 @@ components:
         targetStatus: { type: string, enum: [CANDIDATE, APPROVED] }
         processorId: { type: string }
         note: { type: string }
+    GeoImportFinalization:
+      type: object
+      required: [processedBy]
+      properties:
+        processedBy: { type: string, description: Account or administrator identifier that finalized the run. }
+        actor: { type: string, description: Compatibility alias for processedBy. }
     GeoImportProcessingQueue:
       type: object
       required: [id, importRunId, candidateIds, targetStatus, status]

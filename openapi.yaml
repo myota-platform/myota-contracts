@@ -477,6 +477,17 @@ paths:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportProcessingRequest' } } }
       responses: { '202': { description: Promotion queue accepted, content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportProcessingQueue' } } } } }
+  /v1/geodata/imports/{runId}/processed:
+    post:
+      tags: [Geodata]
+      security: [{ bearerAuth: [] }]
+      summary: Finalize an import and discard staged records
+      description: Idempotently removes the run's pre-processed candidate and promotion-queue rows while preserving the import summary and any already materialized entities.
+      parameters: [{ in: path, name: runId, required: true, schema: { type: string, format: uuid } }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportFinalization' } } }
+      responses: { '200': { description: Import finalized and staged records discarded } }
   /v1/geodata/imports/upload:
     post:
       tags: [Geodata]
@@ -908,6 +919,12 @@ components:
         targetStatus: { type: string, enum: [CANDIDATE, APPROVED] }
         processorId: { type: string }
         note: { type: string }
+    GeoImportFinalization:
+      type: object
+      required: [processedBy]
+      properties:
+        processedBy: { type: string, description: Account or administrator identifier that finalized the run. }
+        actor: { type: string, description: Compatibility alias for processedBy. }
     GeoImportProcessingQueue:
       type: object
       required: [id, importRunId, candidateIds, targetStatus, status]
