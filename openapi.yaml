@@ -451,22 +451,23 @@ paths:
     get:
       tags: [Geodata]
       security: [{ bearerAuth: [] }]
-      summary: List paged pre-processed import records
+      summary: List paged pending pre-processed import records
       parameters:
         - { in: path, name: runId, required: true, schema: { type: string, format: uuid } }
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
-      responses: { '200': { description: Pre-processed candidate records, content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportCandidatePage' } } } } }
+      description: Only records still awaiting administrator validation are returned. Confirmed, rejected, and processed staging records are not exposed by this endpoint.
+      responses: { '200': { description: Pending pre-processed candidate records, content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportCandidatePage' } } } } }
   /v1/geodata/imports/{runId}/candidates/validate:
     post:
       tags: [Geodata]
       security: [{ bearerAuth: [] }]
-      summary: Confirm selected pre-processed records
+      summary: Confirm or reject selected pre-processed records
       parameters: [{ in: path, name: runId, required: true, schema: { type: string, format: uuid } }, { $ref: '#/components/parameters/IdempotencyKey' }]
       requestBody:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportCandidateValidation' } } }
-      responses: { '200': { description: Records confirmed } }
+      responses: { '200': { description: Records confirmed or rejected; rejected records are deleted from staging } }
   /v1/geodata/imports/{runId}/process:
     post:
       tags: [Geodata]
@@ -910,6 +911,7 @@ components:
       properties:
         candidateIds: { type: array, minItems: 1, items: { type: string, format: uuid } }
         reviewerId: { type: string }
+        validationStatus: { type: string, enum: [VALID, REJECTED], default: VALID, description: VALID confirms records for later promotion; REJECTED removes them from the import staging queue. }
         note: { type: string }
     GeoImportProcessingRequest:
       type: object

@@ -407,20 +407,20 @@ paths:
         - $ref: '#/components/parameters/PageSize'
       responses:
         '200':
-          description: Paged pre-processed import records
+          description: Paged pending pre-processed import records; confirmed, rejected, and processed staging records are omitted
           content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportCandidatePage' } } }
   /v1/geodata/imports/{runId}/candidates/validate:
     post:
       tags: [Geodata]
       security: [{ bearerAuth: [] }]
-      summary: Confirm selected pre-processed records for promotion
+      summary: Confirm or reject selected pre-processed records for promotion
       parameters:
         - { in: path, name: runId, required: true, schema: { type: string, format: uuid } }
         - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content: { application/json: { schema: { $ref: '#/components/schemas/GeoImportCandidateValidation' } } }
-      responses: { '200': { description: Selected records confirmed } }
+      responses: { '200': { description: Selected records confirmed or rejected; rejected records are deleted from staging } }
   /v1/geodata/imports/{runId}/process:
     post:
       tags: [Geodata]
@@ -1083,6 +1083,7 @@ components:
       properties:
         candidateIds: { type: array, minItems: 1, items: { type: string, format: uuid } }
         reviewerId: { type: string }
+        validationStatus: { type: string, enum: [VALID, REJECTED], default: VALID, description: VALID confirms records for later promotion; REJECTED removes them from the import staging queue. }
         note: { type: string }
     GeoImportProcessingRequest:
       type: object
