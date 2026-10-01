@@ -50,6 +50,8 @@ The route cleanup is documented in the
 [REST API consolidation plan](https://github.com/myota-platform/myota-docs/blob/main/docs/api-rest-consolidation-plan.md).
 Phase 1 resource aliases are implemented and documented in
 [api-phase1-resource-updates.md](https://github.com/myota-platform/myota-docs/blob/main/docs/api-phase1-resource-updates.md).
+Phase 2 geodata resources are implemented and documented in
+[api-phase2-geodata-resource-model.md](https://github.com/myota-platform/myota-docs/blob/main/docs/api-phase2-geodata-resource-model.md).
 Legacy action routes remain available as deprecated aliases while clients
 migrate. The root OpenAPI file and the myota-platform integration copy are
 generated mirrors of `contracts/openapi.yaml`.
