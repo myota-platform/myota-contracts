@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "ce4ee3569558afc8cb17f480f846aecaf82c11b74cf91e66ae528a05386e20a2",
+  "canonicalSha256": "85343079d684fcc02b163a437788a8f22de46171fcd1818324cf161670a3d300",
   "contractOperations": [
     {
       "method": "GET",
@@ -100,6 +100,11 @@
     },
     {
       "method": "GET",
+      "path": "/v1/awards/{awardId}"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "patchAward",
       "path": "/v1/awards/{awardId}"
     },
     {
@@ -260,6 +265,11 @@
       "path": "/v1/identity/accounts/{accountId}"
     },
     {
+      "method": "PATCH",
+      "operationId": "patchIdentityAccount",
+      "path": "/v1/identity/accounts/{accountId}"
+    },
+    {
       "method": "POST",
       "path": "/v1/identity/accounts/{accountId}/callsigns"
     },
@@ -286,6 +296,16 @@
     {
       "method": "POST",
       "path": "/v1/identity/accounts/{accountId}/primary-callsign"
+    },
+    {
+      "method": "PUT",
+      "operationId": "setPrimaryCallsign",
+      "path": "/v1/identity/accounts/{accountId}/primary-callsign"
+    },
+    {
+      "method": "PUT",
+      "operationId": "replaceAccountRoleAssignments",
+      "path": "/v1/identity/accounts/{accountId}/role-assignments"
     },
     {
       "method": "GET",
@@ -356,6 +376,11 @@
       "path": "/v1/identity/oidc/providers"
     },
     {
+      "method": "PATCH",
+      "operationId": "patchIdentityRole",
+      "path": "/v1/identity/roles/{roleCode}"
+    },
+    {
       "method": "GET",
       "path": "/v1/notifications"
     },
@@ -369,6 +394,11 @@
     },
     {
       "method": "GET",
+      "path": "/v1/programmes/{slug}"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "patchProgramme",
       "path": "/v1/programmes/{slug}"
     },
     {
@@ -386,6 +416,11 @@
     {
       "method": "GET",
       "path": "/v1/programmes/{slug}/content/coverage"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "patchProgrammeContent",
+      "path": "/v1/programmes/{slug}/content/{contentId}"
     },
     {
       "method": "POST",
@@ -416,6 +451,16 @@
       "path": "/v1/programmes/{slug}/entity-types/unassign"
     },
     {
+      "method": "DELETE",
+      "operationId": "unassignProgrammeEntityCategory",
+      "path": "/v1/programmes/{slug}/entity-types/{categoryCode}"
+    },
+    {
+      "method": "PUT",
+      "operationId": "assignProgrammeEntityCategory",
+      "path": "/v1/programmes/{slug}/entity-types/{categoryCode}"
+    },
+    {
       "method": "GET",
       "path": "/v1/programmes/{slug}/policy"
     },
@@ -426,6 +471,11 @@
     {
       "method": "POST",
       "path": "/v1/programmes/{slug}/policy-drafts"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "patchProgrammePolicyDraft",
+      "path": "/v1/programmes/{slug}/policy-drafts/{draftId}"
     },
     {
       "method": "POST",
@@ -593,6 +643,12 @@
     }
   ],
   "serviceRoutes": [
+    {
+      "file": "programmes.py",
+      "method": "DELETE",
+      "path": "/v1/programmes/{slug}/entity-types/{categoryCode}",
+      "service": "programmes"
+    },
     {
       "file": "activity.py",
       "method": "GET",
@@ -846,6 +902,42 @@
       "service": "activity"
     },
     {
+      "file": "awards.py",
+      "method": "PATCH",
+      "path": "/v1/awards/{awardId}",
+      "service": "awards"
+    },
+    {
+      "file": "identity.py",
+      "method": "PATCH",
+      "path": "/v1/identity/accounts/{accountId}",
+      "service": "identity"
+    },
+    {
+      "file": "identity.py",
+      "method": "PATCH",
+      "path": "/v1/identity/roles/{roleCode}",
+      "service": "identity"
+    },
+    {
+      "file": "programmes.py",
+      "method": "PATCH",
+      "path": "/v1/programmes/{slug}",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "PATCH",
+      "path": "/v1/programmes/{slug}/content/{contentId}",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "PATCH",
+      "path": "/v1/programmes/{slug}/policy-drafts/{draftId}",
+      "service": "programmes"
+    },
+    {
       "file": "activity.py",
       "method": "POST",
       "path": "/v1/activations",
@@ -944,6 +1036,12 @@
     {
       "file": "awards.py",
       "method": "POST",
+      "path": "/v1/awards/{awardId}/publish",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
       "path": "/v1/awards/{awardId}/recalculate",
       "service": "awards"
     },
@@ -956,7 +1054,25 @@
     {
       "file": "awards.py",
       "method": "POST",
+      "path": "/v1/awards/{awardId}/retire",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
       "path": "/v1/awards/{awardId}/review",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/{awardId}/review",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/{awardId}/submit",
       "service": "awards"
     },
     {
@@ -1124,6 +1240,18 @@
     {
       "file": "identity.py",
       "method": "POST",
+      "path": "/v1/identity/accounts/{accountId}/primary-callsign",
+      "service": "identity"
+    },
+    {
+      "file": "identity.py",
+      "method": "POST",
+      "path": "/v1/identity/accounts/{accountId}/roles",
+      "service": "identity"
+    },
+    {
+      "file": "identity.py",
+      "method": "POST",
       "path": "/v1/identity/accounts/{accountId}/roles",
       "service": "identity"
     },
@@ -1136,7 +1264,19 @@
     {
       "file": "identity.py",
       "method": "POST",
+      "path": "/v1/identity/admin/accounts/{accountId}/update",
+      "service": "identity"
+    },
+    {
+      "file": "identity.py",
+      "method": "POST",
       "path": "/v1/identity/admin/roles",
+      "service": "identity"
+    },
+    {
+      "file": "identity.py",
+      "method": "POST",
+      "path": "/v1/identity/admin/roles/{roleCode}/update",
       "service": "identity"
     },
     {
@@ -1208,6 +1348,12 @@
     {
       "file": "programmes.py",
       "method": "POST",
+      "path": "/v1/programmes/{slug}/archive",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
       "path": "/v1/programmes/{slug}/content",
       "service": "programmes"
     },
@@ -1220,7 +1366,25 @@
     {
       "file": "programmes.py",
       "method": "POST",
+      "path": "/v1/programmes/{slug}/content/{contentId}/publish",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
       "path": "/v1/programmes/{slug}/content/{contentId}/review",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
+      "path": "/v1/programmes/{slug}/content/{contentId}/review",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
+      "path": "/v1/programmes/{slug}/content/{contentId}/submit",
       "service": "programmes"
     },
     {
@@ -1244,6 +1408,18 @@
     {
       "file": "programmes.py",
       "method": "POST",
+      "path": "/v1/programmes/{slug}/entity-types/assign",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
+      "path": "/v1/programmes/{slug}/entity-types/unassign",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
       "path": "/v1/programmes/{slug}/entity-types/unassign",
       "service": "programmes"
     },
@@ -1262,6 +1438,18 @@
     {
       "file": "programmes.py",
       "method": "POST",
+      "path": "/v1/programmes/{slug}/policy-drafts/{draftId}/publish",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
+      "path": "/v1/programmes/{slug}/policy-drafts/{draftId}/review",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
       "path": "/v1/programmes/{slug}/policy-drafts/{draftId}/review",
       "service": "programmes"
     },
@@ -1269,6 +1457,18 @@
       "file": "programmes.py",
       "method": "POST",
       "path": "/v1/programmes/{slug}/policy-drafts/{draftId}/submit",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
+      "path": "/v1/programmes/{slug}/policy-drafts/{draftId}/submit",
+      "service": "programmes"
+    },
+    {
+      "file": "programmes.py",
+      "method": "POST",
+      "path": "/v1/programmes/{slug}/update",
       "service": "programmes"
     },
     {
@@ -1294,6 +1494,24 @@
       "method": "POST",
       "path": "/v1/statistics/rebuild",
       "service": "activity"
+    },
+    {
+      "file": "identity.py",
+      "method": "PUT",
+      "path": "/v1/identity/accounts/{accountId}/primary-callsign",
+      "service": "identity"
+    },
+    {
+      "file": "identity.py",
+      "method": "PUT",
+      "path": "/v1/identity/accounts/{accountId}/role-assignments",
+      "service": "identity"
+    },
+    {
+      "file": "programmes.py",
+      "method": "PUT",
+      "path": "/v1/programmes/{slug}/entity-types/{categoryCode}",
+      "service": "programmes"
     }
   ]
 }

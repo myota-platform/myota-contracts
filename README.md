@@ -46,11 +46,13 @@ duplicate checks in [contract-freeze.yml](.github/workflows/contract-freeze.yml)
 The generated route baseline is stored in
 [`contracts/route-inventory.json`](contracts/route-inventory.json).
 
-The proposed route cleanup is documented in the
+The route cleanup is documented in the
 [REST API consolidation plan](https://github.com/myota-platform/myota-docs/blob/main/docs/api-rest-consolidation-plan.md).
-No endpoint changes have been implemented yet. The plan also identifies the
-duplicate root OpenAPI file and the myota-platform integration copy that need
-to become generated or CI-checked mirrors.
+Phase 1 resource aliases are implemented and documented in
+[api-phase1-resource-updates.md](https://github.com/myota-platform/myota-docs/blob/main/docs/api-phase1-resource-updates.md).
+Legacy action routes remain available as deprecated aliases while clients
+migrate. The root OpenAPI file and the myota-platform integration copy are
+generated mirrors of `contracts/openapi.yaml`.
 
 ## Source project
 
