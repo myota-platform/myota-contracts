@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "candidates": [
+    {
+      "signature": "POST /v1/awards/{awardId}/{action}",
+      "paths": ["/v1/awards/{awardId}/publish", "/v1/awards/{awardId}/recalculate", "/v1/awards/{awardId}/retire", "/v1/awards/{awardId}/review", "/v1/awards/{awardId}/submit"],
+      "reason": "Audited award lifecycle and recalculation commands are intentionally explicit until award resource aliases are migrated."
+    },
+    {
+      "signature": "POST /v1/geodata/entities/{entityId}/{action}",
+      "paths": ["/v1/geodata/entities/{entityId}/delete", "/v1/geodata/entities/{entityId}/review"],
+      "reason": "Entity deletion and review are audited domain commands with distinct authorization and cross-service effects."
+    },
+    {
+      "signature": "POST /v1/identity/accounts/{accountId}/callsigns/{callsignId}/{action}",
+      "paths": ["/v1/identity/accounts/{accountId}/callsigns/{callsignId}/retire", "/v1/identity/accounts/{accountId}/callsigns/{callsignId}/verify"],
+      "reason": "Callsign verification and retirement are separate evidence-backed lifecycle commands."
+    },
+    {
+      "signature": "POST /v1/programmes/{slug}/content/{contentId}/{action}",
+      "paths": ["/v1/programmes/{slug}/content/{contentId}/publish", "/v1/programmes/{slug}/content/{contentId}/review", "/v1/programmes/{slug}/content/{contentId}/submit"],
+      "reason": "Content draft submission, review, and publication have separate actors and audit records."
+    },
+    {
+      "signature": "POST /v1/programmes/{slug}/entity-types/{action}",
+      "paths": ["/v1/programmes/{slug}/entity-types/assign", "/v1/programmes/{slug}/entity-types/unassign"],
+      "reason": "Assignment and removal remain explicit relationship commands until PUT/DELETE aliases are adopted."
+    },
+    {
+      "signature": "POST /v1/programmes/{slug}/policy-drafts/{draftId}/{action}",
+      "paths": ["/v1/programmes/{slug}/policy-drafts/{draftId}/publish", "/v1/programmes/{slug}/policy-drafts/{draftId}/review", "/v1/programmes/{slug}/policy-drafts/{draftId}/submit"],
+      "reason": "Policy draft submission, review, and publication have separate actors and effective-date rules."
+    },
+    {
+      "signature": "POST /v1/programmes/{slug}/{action}",
+      "paths": ["/v1/programmes/{slug}/archive", "/v1/programmes/{slug}/content", "/v1/programmes/{slug}/update"],
+      "reason": "The broad resource family contains both ordinary content creation and audited programme lifecycle/update commands; target paths are tracked separately in the consolidation table."
+    }
+  ]
+}

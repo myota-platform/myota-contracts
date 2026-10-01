@@ -1,0 +1,54 @@
+name: Contract freeze checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  phase-0:
+    name: Reconcile OpenAPI and runtime route registries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out canonical contracts
+        uses: actions/checkout@v4
+        with:
+          path: myota-contracts
+
+      - name: Check out deployment runtime registries
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-deploy
+          path: myota-deploy
+          token: ${{ github.token }}
+
+      - name: Check out platform contract mirror
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-platform
+          path: myota-platform
+          token: ${{ github.token }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate YAML syntax
+        working-directory: myota-contracts
+        run: ruby -e 'require "yaml"; YAML.load_file("contracts/openapi.yaml"); YAML.load_file("contracts/semantic-duplicates.json")'
+
+      - name: Check frozen contract and route inventory
+        working-directory: myota-contracts
+        run: >-
+          python3 scripts/check_contract_phase0.py
+          --canonical contracts/openapi.yaml
+          --mirror openapi.yaml
+          --mirror ../myota-platform/contracts/openapi.yaml
+          --service-root ../myota-deploy/services
+          --semantic-baseline contracts/semantic-duplicates.json
+          --inventory-out contracts/route-inventory.json
+
+      - name: Ensure generated inventory is committed
+        working-directory: myota-contracts
+        run: git diff --exit-code -- contracts/route-inventory.json

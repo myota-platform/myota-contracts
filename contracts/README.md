@@ -1,9 +1,14 @@
 # Contract generation and compatibility
 
-`openapi.yaml` is the versioned source of truth for HTTP contracts. The checked-
+The repository's `openapi.yaml` is the versioned source of truth for HTTP contracts. The checked-
 in `python/myota_client.py` is a dependency-light client for local integration;
 production SDKs should be regenerated in CI with the pinned OpenAPI Generator
 version selected by the consuming repository.
+
+The repository-root `openapi.yaml` and `myota-platform/contracts/openapi.yaml`
+files are generated mirrors. Do not edit them directly; run
+`python3 scripts/sync_contract_mirrors.py --platform-root ../myota-platform`
+after changing the canonical contract.
 
 Geodata payloads use the shared Master data category catalogue: `entityTypes` is
 an ordered, non-empty list, `entityTypeCodes` is a compatibility alias, and
