@@ -52,6 +52,8 @@ Phase 1 resource aliases are implemented and documented in
 [api-phase1-resource-updates.md](https://github.com/myota-platform/myota-docs/blob/main/docs/api-phase1-resource-updates.md).
 Phase 2 geodata resources are implemented and documented in
 [api-phase2-geodata-resource-model.md](https://github.com/myota-platform/myota-docs/blob/main/docs/api-phase2-geodata-resource-model.md).
+Phase 3 activity and award jobs are implemented and documented in
+[api-phase3-activity-award-jobs.md](https://github.com/myota-platform/myota-docs/blob/main/docs/api-phase3-activity-award-jobs.md).
 Legacy action routes remain available as deprecated aliases while clients
 migrate. The root OpenAPI file and the myota-platform integration copy are
 generated mirrors of `contracts/openapi.yaml`.

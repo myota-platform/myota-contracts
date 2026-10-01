@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "d00a2551d266555e282dca93b9a762a8794871bc3fe6ade9cbedd6a9834a68b8",
+  "canonicalSha256": "d6635769a0983ee65b4931c228d919df65c5816e0c609361f724d969794f401d",
   "contractOperations": [
     {
       "method": "GET",
@@ -20,6 +20,11 @@
     },
     {
       "method": "GET",
+      "path": "/v1/activations/{activationId}"
+    },
+    {
+      "method": "PATCH",
+      "operationId": "patchActivation",
       "path": "/v1/activations/{activationId}"
     },
     {
@@ -71,8 +76,23 @@
       "path": "/v1/awards/evaluate"
     },
     {
+      "method": "POST",
+      "operationId": "createAwardEvaluationJob",
+      "path": "/v1/awards/evaluation-jobs"
+    },
+    {
+      "method": "GET",
+      "operationId": "getAwardEvaluationJob",
+      "path": "/v1/awards/evaluation-jobs/{jobId}"
+    },
+    {
       "method": "GET",
       "path": "/v1/awards/issuances"
+    },
+    {
+      "method": "GET",
+      "operationId": "getAwardArtifact",
+      "path": "/v1/awards/issuances/{issuanceId}/artifact"
     },
     {
       "method": "GET",
@@ -81,6 +101,21 @@
     {
       "method": "POST",
       "path": "/v1/awards/issuances/{issuanceId}/render"
+    },
+    {
+      "method": "POST",
+      "operationId": "createCertificateRenderJob",
+      "path": "/v1/awards/issuances/{issuanceId}/render-jobs"
+    },
+    {
+      "method": "GET",
+      "operationId": "getCertificateRenderJob",
+      "path": "/v1/awards/issuances/{issuanceId}/render-jobs/{jobId}"
+    },
+    {
+      "method": "GET",
+      "operationId": "getAwardProgress",
+      "path": "/v1/awards/progress"
     },
     {
       "method": "POST",
@@ -93,6 +128,11 @@
     {
       "method": "POST",
       "path": "/v1/awards/requests"
+    },
+    {
+      "method": "POST",
+      "operationId": "createAwardIssuance",
+      "path": "/v1/awards/requests/{requestId}/issuances"
     },
     {
       "method": "POST",
@@ -114,6 +154,16 @@
     {
       "method": "POST",
       "path": "/v1/awards/{awardId}/recalculate"
+    },
+    {
+      "method": "POST",
+      "operationId": "createAwardRecalculationJob",
+      "path": "/v1/awards/{awardId}/recalculation-jobs"
+    },
+    {
+      "method": "GET",
+      "operationId": "getAwardRecalculationJob",
+      "path": "/v1/awards/{awardId}/recalculation-jobs/{jobId}"
     },
     {
       "method": "POST",
@@ -551,7 +601,22 @@
     },
     {
       "method": "POST",
+      "operationId": "createQsoIngestion",
+      "path": "/v1/qso-ingestions"
+    },
+    {
+      "method": "GET",
+      "operationId": "getQsoIngestion",
+      "path": "/v1/qso-ingestions/{ingestionId}"
+    },
+    {
+      "method": "POST",
       "path": "/v1/qsos/{qsoId}/corrections"
+    },
+    {
+      "method": "POST",
+      "operationId": "reviewQsoCorrection",
+      "path": "/v1/qsos/{qsoId}/corrections/{correctionId}/review"
     },
     {
       "method": "GET",
@@ -560,6 +625,16 @@
     {
       "method": "POST",
       "path": "/v1/statistics/rebuild"
+    },
+    {
+      "method": "POST",
+      "operationId": "createStatisticsRebuildJob",
+      "path": "/v1/statistics/rebuild-jobs"
+    },
+    {
+      "method": "GET",
+      "operationId": "getStatisticsRebuildJob",
+      "path": "/v1/statistics/rebuild-jobs/{jobId}"
     }
   ],
   "duplicateOperationIds": [],
@@ -728,13 +803,37 @@
     {
       "file": "awards.py",
       "method": "GET",
+      "path": "/v1/awards/evaluation-jobs/{jobId}",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "GET",
       "path": "/v1/awards/issuances",
       "service": "awards"
     },
     {
       "file": "awards.py",
       "method": "GET",
+      "path": "/v1/awards/issuances/{issuanceId}/artifact",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "GET",
       "path": "/v1/awards/issuances/{issuanceId}/download",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "GET",
+      "path": "/v1/awards/issuances/{issuanceId}/render-jobs/{jobId}",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "GET",
+      "path": "/v1/awards/progress",
       "service": "awards"
     },
     {
@@ -750,6 +849,12 @@
       "service": "awards"
     },
     {
+      "file": "awards.py",
+      "method": "GET",
+      "path": "/v1/awards/{awardId}/recalculation-jobs/{jobId}",
+      "service": "awards"
+    },
+    {
       "file": "programmes.py",
       "method": "GET",
       "path": "/v1/entity-types",
@@ -759,6 +864,12 @@
       "file": "geodata.py",
       "method": "GET",
       "path": "/v1/geodata/adapters",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/bbox",
       "service": "geodata"
     },
     {
@@ -944,7 +1055,25 @@
     {
       "file": "activity.py",
       "method": "GET",
+      "path": "/v1/qso-ingestions/{ingestionId}",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "GET",
       "path": "/v1/statistics",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "GET",
+      "path": "/v1/statistics/rebuild-jobs/{jobId}",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "PATCH",
+      "path": "/v1/activations/{activationId}",
       "service": "activity"
     },
     {
@@ -1010,6 +1139,12 @@
     {
       "file": "activity.py",
       "method": "POST",
+      "path": "/v1/activations/{activationId}/close",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
       "path": "/v1/activations/{activationId}/qsos",
       "service": "activity"
     },
@@ -1017,6 +1152,18 @@
       "file": "activity.py",
       "method": "POST",
       "path": "/v1/activations/{activationId}/qsos/batch",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/activations/{activationId}/qsos/batch",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/adif/imports",
       "service": "activity"
     },
     {
@@ -1058,7 +1205,37 @@
     {
       "file": "awards.py",
       "method": "POST",
+      "path": "/v1/awards/evaluate",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/evaluation-jobs",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
       "path": "/v1/awards/issuances/{issuanceId}/render",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/issuances/{issuanceId}/render",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/issuances/{issuanceId}/render-jobs",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/progress",
       "service": "awards"
     },
     {
@@ -1071,6 +1248,18 @@
       "file": "awards.py",
       "method": "POST",
       "path": "/v1/awards/requests",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/requests/{requestId}/issuances",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/requests/{requestId}/issue",
       "service": "awards"
     },
     {
@@ -1095,6 +1284,18 @@
       "file": "awards.py",
       "method": "POST",
       "path": "/v1/awards/{awardId}/recalculate",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/{awardId}/recalculate",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/{awardId}/recalculation-jobs",
       "service": "awards"
     },
     {
@@ -1622,13 +1823,43 @@
     {
       "file": "activity.py",
       "method": "POST",
+      "path": "/v1/qso-corrections/{correctionId}/review",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/qso-ingestions",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
       "path": "/v1/qsos/{qsoId}/corrections",
       "service": "activity"
     },
     {
       "file": "activity.py",
       "method": "POST",
+      "path": "/v1/qsos/{qsoId}/corrections/{correctionId}/review",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
       "path": "/v1/statistics/rebuild",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/statistics/rebuild",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/statistics/rebuild-jobs",
       "service": "activity"
     },
     {
