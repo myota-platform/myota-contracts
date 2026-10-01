@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "d6635769a0983ee65b4931c228d919df65c5816e0c609361f724d969794f401d",
+  "canonicalSha256": "66a6ea38b6940d4555967e7231542750177908e8fb74246bd43ea05f9436c083",
   "contractOperations": [
     {
       "method": "GET",
@@ -17,6 +17,16 @@
     {
       "method": "GET",
       "path": "/v1/activations/admin/entities/{entityId}/deletion-impact"
+    },
+    {
+      "method": "POST",
+      "operationId": "cascadeEntityDeletion",
+      "path": "/v1/activations/entity-deletion-cascades"
+    },
+    {
+      "method": "GET",
+      "operationId": "getEntityDeletionImpact",
+      "path": "/v1/activations/entity-deletion-impacts/{entityId}"
     },
     {
       "method": "GET",
@@ -466,6 +476,11 @@
       "path": "/v1/identity/oidc/providers"
     },
     {
+      "method": "POST",
+      "operationId": "createIdentityRole",
+      "path": "/v1/identity/roles"
+    },
+    {
       "method": "PATCH",
       "operationId": "patchIdentityRole",
       "path": "/v1/identity/roles/{roleCode}"
@@ -774,6 +789,18 @@
       "file": "activity.py",
       "method": "GET",
       "path": "/v1/activations/admin/entities/{entityId}/deletion-impact",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "GET",
+      "path": "/v1/activations/admin/entities/{entityId}/deletion-impact",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "GET",
+      "path": "/v1/activations/entity-deletion-impacts/{entityId}",
       "service": "activity"
     },
     {
@@ -1128,6 +1155,18 @@
       "file": "activity.py",
       "method": "POST",
       "path": "/v1/activations/admin/entities/{entityId}/cascade-delete",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/activations/admin/entities/{entityId}/cascade-delete",
+      "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/activations/entity-deletion-cascades",
       "service": "activity"
     },
     {
@@ -1668,6 +1707,12 @@
       "file": "identity.py",
       "method": "POST",
       "path": "/v1/identity/oidc/providers",
+      "service": "identity"
+    },
+    {
+      "file": "identity.py",
+      "method": "POST",
+      "path": "/v1/identity/roles",
       "service": "identity"
     },
     {
