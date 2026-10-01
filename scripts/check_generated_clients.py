@@ -6,7 +6,7 @@ import sys
 REQUIRED = {
     "patchProgramme", "assignProgrammeEntityCategory", "unassignProgrammeEntityCategory",
     "patchProgrammeContent", "patchProgrammePolicyDraft", "patchIdentityAccount",
-    "patchIdentityRole", "patchGeodataEntityMetadata", "putGeodataEntityGeometry",
+    "patchIdentityRole", "createIdentityRole", "patchGeodataEntityMetadata", "putGeodataEntityGeometry",
     "putGeodataEntityCategories", "postGeodataEntityReview", "postGeodataProposal",
     "createGeodataEntityDeletionJob", "confirmGeodataEntityDeletionJob", "patchAward",
 }
@@ -17,7 +17,7 @@ names = {
     targets[0]: REQUIRED,
     targets[1]: {"patch_programme", "assign_programme_entity_category", "unassign_programme_entity_category",
                  "patch_programme_content", "patch_programme_policy_draft", "patch_identity_account",
-                 "patch_identity_role", "patch_geodata_entity_metadata", "put_geodata_entity_geometry",
+                 "patch_identity_role", "create_identity_role", "patch_geodata_entity_metadata", "put_geodata_entity_geometry",
                  "put_geodata_entity_categories", "post_geodata_entity_review", "post_geodata_proposal",
                  "create_geodata_entity_deletion_job", "confirm_geodata_entity_deletion_job", "patch_award"},
 }

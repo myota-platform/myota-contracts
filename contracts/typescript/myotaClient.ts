@@ -40,6 +40,10 @@ export class MyOTAClient {
     return this.request<T>(`/v1/identity/accounts/${encodeURIComponent(accountId)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
   }
 
+  createIdentityRole<T = unknown>(body: unknown): Promise<T> {
+    return this.request<T>('/v1/identity/roles', { method: 'POST', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
+  }
+
   patchIdentityRole<T = unknown>(roleCode: string, body: unknown): Promise<T> {
     return this.request<T>(`/v1/identity/roles/${encodeURIComponent(roleCode)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
   }

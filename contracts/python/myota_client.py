@@ -67,6 +67,9 @@ class MyOTAClient:
     def patch_identity_account(self, account_id: str, body: dict[str, Any]) -> dict[str, Any]:
         return self._write("PATCH", f"/v1/identity/accounts/{account_id}", body)
 
+    def create_identity_role(self, body: dict[str, Any]) -> dict[str, Any]:
+        return self._write("POST", "/v1/identity/roles", body)
+
     def patch_identity_role(self, role_code: str, body: dict[str, Any]) -> dict[str, Any]:
         return self._write("PATCH", f"/v1/identity/roles/{role_code}", body)
 
