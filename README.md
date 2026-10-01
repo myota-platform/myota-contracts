@@ -40,9 +40,15 @@ for the policy and product boundaries that contracts must preserve.
 
 ## Architecture
 
-The OpenAPI document is the source of truth for HTTP compatibility. CI runs
+The OpenAPI document is the source of truth for HTTP compatibility. The
+checked-in stdlib Python client and TypeScript client façade cover the
+preferred resource operations introduced in Phases 1–3. Browser clients may
+supply their own authenticated request implementation, but lifecycle writes
+must use these resource methods rather than deprecated action routes. CI runs
 the Phase 0 mirror, route-registration, duplicate-operation, and semantic-
 duplicate checks in [contract-freeze.yml](.github/workflows/contract-freeze.yml).
+It also verifies preferred-operation coverage with
+[`scripts/check_generated_clients.py`](scripts/check_generated_clients.py).
 The generated route baseline is stored in
 [`contracts/route-inventory.json`](contracts/route-inventory.json).
 

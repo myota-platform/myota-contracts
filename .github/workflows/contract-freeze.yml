@@ -52,3 +52,7 @@ jobs:
       - name: Ensure generated inventory is committed
         working-directory: myota-contracts
         run: git diff --exit-code -- contracts/route-inventory.json
+
+      - name: Check checked-in typed clients
+        working-directory: myota-contracts
+        run: python3 scripts/check_generated_clients.py
