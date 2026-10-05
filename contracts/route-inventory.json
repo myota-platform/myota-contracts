@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "9bf87018a3938cbf78ede916072dff5fe8b8600f0177b7f229e22dd53c0b4a6d",
+  "canonicalSha256": "f8c0c23f59beb070031382f33b03140cf94be4bdbd1315f4dd9b86c8f58abd5b",
   "contractOperations": [
     {
       "method": "GET",
