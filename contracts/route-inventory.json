@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "f8c0c23f59beb070031382f33b03140cf94be4bdbd1315f4dd9b86c8f58abd5b",
+  "canonicalSha256": "7d26ca138f7131fb4a0f50e9728cafde386dac1be576ec12579b56447b4bbeef",
   "contractOperations": [
     {
       "method": "GET",
@@ -325,6 +325,15 @@
     {
       "method": "POST",
       "path": "/v1/geodata/imports/{runId}/processed"
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/geodata/load-test-runs/{testRunId}"
+    },
+    {
+      "method": "DELETE",
+      "operationId": "deleteGeodataLoadTestRun",
+      "path": "/v1/geodata/load-test-runs/{testRunId}"
     },
     {
       "method": "GET",
@@ -1936,6 +1945,306 @@
       "method": "PUT",
       "path": "/v1/programmes/{slug}/entity-types/{categoryCode}",
       "service": "programmes"
+    },
+    {
+      "file": "geodata.py",
+      "method": "DELETE",
+      "path": "/v1/geodata/load-test-runs/{testRunId}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/adapters",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/bbox",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/bbox",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/conflation",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/entities",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/entities/{entityId}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/entities/{entityId}/audit",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/entity-deletion-jobs/{jobId}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/imports",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/imports/{runId}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/imports/{runId}/candidates",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/location-options",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/refresh-schedules",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/tiles/{z}/{x}/{y}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "PATCH",
+      "path": "/v1/geodata/entities/{entityId}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/conflation/{candidateId}/resolve",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/delete",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/delete",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/entity-type",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/entity-type",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/geometry",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/geometry",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/geometry-type",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/location",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/location",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/name",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/name",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/review",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/review",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/reviews",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/status",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/status",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entity-deletion-jobs",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entity-deletion-jobs/{jobId}/confirm",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports/manual",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports/manual",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports/upload",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports/upload",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports/{runId}/candidates/validate",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports/{runId}/process",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/imports/{runId}/processed",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/proposals",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/proposals/draw",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/proposals/draw",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/refresh-schedules",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/refresh-schedules/{scheduleId}/run",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "PUT",
+      "path": "/v1/geodata/entities/{entityId}/categories",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "PUT",
+      "path": "/v1/geodata/entities/{entityId}/geometry",
+      "service": "geodata"
     }
   ]
 }
