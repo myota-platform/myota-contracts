@@ -1,6 +1,6 @@
 # MyOTA event contract
 
-Services publish durable, versioned events to an outbox owned by the emitting service. The initial implementation records the event envelope in memory; production deployment connects the outbox to a broker such as NATS JetStream or RabbitMQ without changing the HTTP contracts.
+Services persist versioned events in a transactional outbox in their owned database. Outbox workers publish to the durable `MYOTA_EVENTS` NATS JetStream stream; domain-owned consumers use durable identities, explicit acknowledgements, database checkpoints and recoverable leases. No accepted production work relies on an API process's event list or executor queue.
 
 ```json
 {
@@ -19,7 +19,18 @@ Important events include `identity.account.created.v1`, `identity.callsign.verif
 File and pasted imports stop at `PREPROCESSED`. The administrator validation
 queue is paged and selection-based. Processing publishes the selected IDs to
 the `myota.geodata.import.process.v1` NATS subject (represented by the durable
-outbox in local development), with an explicit `CANDIDATE` or `APPROVED` target.
+outbox in local development and production), with an explicit `CANDIDATE` or `APPROVED` target. Confirmation, the processing job and outbox insert commit together; queued records cannot be submitted to another job.
+
+Preprocessing uses `myota.geodata.import.preprocess.v1`, durable pull consumer
+`geodata-preprocessing-v1`. Promotion uses `myota.geodata.import.process.v1`,
+consumer `geodata-import-processing-v2`. Confirmed entity deletion uses
+`geodata.entity-deletion-job.queued.v1` with `payload.natsSubject` set to
+`myota.geodata.entity.delete.v1`, consumer `geodata-entity-deletion-v1`.
+Consumers are deployed separately from the HTTP API and remain geodata-owned.
+They record side effects/results in PostGIS before acknowledging delivery;
+duplicate event delivery is expected and guarded by stable IDs and checkpoints.
+Broker metadata and sampled status history are exposed through the authenticated
+operations API; that service never consumes, acknowledges or purges messages.
 
 `CANDIDATE` is the single pre-review lifecycle state. A candidate records its
 origin in `candidateSource.type`: `ADAPTER_IMPORT` identifies an adapter and

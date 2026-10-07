@@ -8,6 +8,12 @@ dependency-light generated client used by the local integration slice.
 
 ## What works now
 
+- Permission-checked JetStream status and paged snapshot-history resources at
+  `/v1/operations/jetstream` and `/v1/operations/jetstream/snapshots`, with
+  nullable unknown measurements rather than invented zero values.
+- Entity responses expose `version`; preferred entity update methods in both
+  clients accept an optional version and send `If-Match`. Stale updates return
+  HTTP 409, allowing users to reload before overwriting concurrent work.
 - Contracts expose reusable capabilities without embedding the charter,
   eligibility, award thresholds, or rules of MPOTA, POTA, or another
   programme.

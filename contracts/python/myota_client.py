@@ -39,6 +39,7 @@ class MyOTAClient:
         body: dict[str, Any] | None = None,
         idempotency_key: str | None = None,
         query: Mapping[str, Any] | None = None,
+        expected_version: int | None = None,
     ) -> dict[str, Any]:
         if query:
             from urllib.parse import urlencode
@@ -53,6 +54,8 @@ class MyOTAClient:
             headers["Content-Type"] = "application/json"
         if idempotency_key:
             headers["Idempotency-Key"] = idempotency_key
+        if expected_version is not None:
+            headers["If-Match"] = f'"{expected_version}"'
         if self.access_token:
             headers["Authorization"] = f"Bearer {self.access_token}"
         try:
@@ -79,9 +82,26 @@ class MyOTAClient:
         body: dict[str, Any],
         *,
         idempotency_key: str | None = None,
+        expected_version: int | None = None,
     ) -> dict[str, Any]:
         return self.request(
-            method, path, body, idempotency_key or str(uuid.uuid4())
+            method,
+            path,
+            body,
+            idempotency_key or str(uuid.uuid4()),
+            expected_version=expected_version,
+        )
+
+    def get_jetstream_status(self) -> dict[str, Any]:
+        return self.request("GET", "/v1/operations/jetstream")
+
+    def list_jetstream_snapshots(
+        self, page: int = 1, page_size: int = 20
+    ) -> dict[str, Any]:
+        return self.request(
+            "GET",
+            "/v1/operations/jetstream/snapshots",
+            query={"page": page, "pageSize": page_size},
         )
 
     # Programme resources
@@ -135,29 +155,59 @@ class MyOTAClient:
         return self._write("PATCH", f"/v1/identity/roles/{role_code}", body)
 
     def patch_geodata_entity_metadata(
-        self, entity_id: str, body: dict[str, Any]
-    ) -> dict[str, Any]:
-        return self._write("PATCH", f"/v1/geodata/entities/{entity_id}", body)
-
-    def put_geodata_entity_geometry(
-        self, entity_id: str, body: dict[str, Any]
+        self,
+        entity_id: str,
+        body: dict[str, Any],
+        *,
+        expected_version: int | None = None,
     ) -> dict[str, Any]:
         return self._write(
-            "PUT", f"/v1/geodata/entities/{entity_id}/geometry", body
+            "PATCH",
+            f"/v1/geodata/entities/{entity_id}",
+            body,
+            expected_version=expected_version,
+        )
+
+    def put_geodata_entity_geometry(
+        self,
+        entity_id: str,
+        body: dict[str, Any],
+        *,
+        expected_version: int | None = None,
+    ) -> dict[str, Any]:
+        return self._write(
+            "PUT",
+            f"/v1/geodata/entities/{entity_id}/geometry",
+            body,
+            expected_version=expected_version,
         )
 
     def put_geodata_entity_categories(
-        self, entity_id: str, body: dict[str, Any]
+        self,
+        entity_id: str,
+        body: dict[str, Any],
+        *,
+        expected_version: int | None = None,
     ) -> dict[str, Any]:
         return self._write(
-            "PUT", f"/v1/geodata/entities/{entity_id}/categories", body
+            "PUT",
+            f"/v1/geodata/entities/{entity_id}/categories",
+            body,
+            expected_version=expected_version,
         )
 
     def post_geodata_entity_review(
-        self, entity_id: str, body: dict[str, Any]
+        self,
+        entity_id: str,
+        body: dict[str, Any],
+        *,
+        expected_version: int | None = None,
     ) -> dict[str, Any]:
         return self._write(
-            "POST", f"/v1/geodata/entities/{entity_id}/reviews", body
+            "POST",
+            f"/v1/geodata/entities/{entity_id}/reviews",
+            body,
+            expected_version=expected_version,
         )
 
     def post_geodata_proposal(self, body: dict[str, Any]) -> dict[str, Any]:

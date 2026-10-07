@@ -5,6 +5,8 @@ from pathlib import Path
 import sys
 
 REQUIRED = {
+    "getJetStreamStatus",
+    "listJetStreamSnapshots",
     "patchProgramme",
     "assignProgrammeEntityCategory",
     "unassignProgrammeEntityCategory",
@@ -31,6 +33,8 @@ targets = [
 names = {
     targets[0]: REQUIRED,
     targets[1]: {
+        "get_jetstream_status",
+        "list_jetstream_snapshots",
         "patch_programme",
         "assign_programme_entity_category",
         "unassign_programme_entity_category",

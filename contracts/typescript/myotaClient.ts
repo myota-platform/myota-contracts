@@ -16,6 +16,14 @@ export type ApiRequest = <T>(path: string, options?: RequestOptions) => Promise<
 export class MyOTAClient {
   constructor(private readonly request: ApiRequest) {}
 
+  getJetStreamStatus<T = unknown>(): Promise<T> {
+    return this.request<T>('/v1/operations/jetstream');
+  }
+
+  listJetStreamSnapshots<T = unknown>(page = 1, pageSize = 20): Promise<T> {
+    return this.request<T>(`/v1/operations/jetstream/snapshots?page=${page}&pageSize=${pageSize}`);
+  }
+
   patchProgramme<T = unknown>(slug: string, body: unknown): Promise<T> {
     return this.request<T>(`/v1/programmes/${encodeURIComponent(slug)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
   }
@@ -48,20 +56,20 @@ export class MyOTAClient {
     return this.request<T>(`/v1/identity/roles/${encodeURIComponent(roleCode)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
   }
 
-  patchGeodataEntityMetadata<T = unknown>(entityId: string, body: unknown): Promise<T> {
-    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
+  patchGeodataEntityMetadata<T = unknown>(entityId: string, body: unknown, version?: number): Promise<T> {
+    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID(), ...(version === undefined ? {} : { 'If-Match': `"${version}"` }) } });
   }
 
-  putGeodataEntityGeometry<T = unknown>(entityId: string, body: unknown): Promise<T> {
-    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/geometry`, { method: 'PUT', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
+  putGeodataEntityGeometry<T = unknown>(entityId: string, body: unknown, version?: number): Promise<T> {
+    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/geometry`, { method: 'PUT', body, headers: { 'Idempotency-Key': crypto.randomUUID(), ...(version === undefined ? {} : { 'If-Match': `"${version}"` }) } });
   }
 
-  putGeodataEntityCategories<T = unknown>(entityId: string, body: unknown): Promise<T> {
-    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/categories`, { method: 'PUT', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
+  putGeodataEntityCategories<T = unknown>(entityId: string, body: unknown, version?: number): Promise<T> {
+    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/categories`, { method: 'PUT', body, headers: { 'Idempotency-Key': crypto.randomUUID(), ...(version === undefined ? {} : { 'If-Match': `"${version}"` }) } });
   }
 
-  postGeodataEntityReview<T = unknown>(entityId: string, body: unknown): Promise<T> {
-    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/reviews`, { method: 'POST', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
+  postGeodataEntityReview<T = unknown>(entityId: string, body: unknown, version?: number): Promise<T> {
+    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/reviews`, { method: 'POST', body, headers: { 'Idempotency-Key': crypto.randomUUID(), ...(version === undefined ? {} : { 'If-Match': `"${version}"` }) } });
   }
 
   postGeodataProposal<T = unknown>(body: unknown): Promise<T> {
