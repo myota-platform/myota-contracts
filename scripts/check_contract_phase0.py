@@ -23,7 +23,7 @@ METHODS = ("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
 REGISTRY_ROUTE = re.compile(
     r"\(\s*['\"]("
     + "|".join(METHODS)
-    + r")['\"]\s*,\s*['\"](/v1/[^'\"]+)['\"]\s*\)"
+    + r")['\"]\s*,\s*['\"](/v1/[^'\"]+)['\"]\s*,?\s*\)"
 )
 PATH_LINE = re.compile(r"^  (/v1/[^:]+):\s*$")
 OPERATION_LINE = re.compile(
