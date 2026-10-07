@@ -14,6 +14,12 @@ dependency-light generated client used by the local integration slice.
 
 The OpenAPI document is the canonical cross-service contract. Geodata imports and manual proposals accept one or more shared `entityTypes`; the first ordered code is retained as the legacy primary `entityType`, while the relational assignment set is authoritative. Imports are programme-independent and first enter durable pre-processing; administrator promotion explicitly chooses CANDIDATE or APPROVED. Programme assignment and programme-specific eligibility remain separate concerns.
 
+Browser file intake uses the contract's user-owned resumable upload-session
+resource, bounded binary part upload, progress lookup, explicit completion, and
+abort operations under `/v1/geodata/import-uploads`. See the
+[uploaded-source and worker lifecycle](https://github.com/myota-platform/myota-docs/blob/main/docs/geodata-horizontal-scaling-roadmap.md)
+for retry, object-storage, and JetStream execution semantics.
+
 Phase 0 is frozen. The canonical file is `contracts/openapi.yaml`; the root
 file and the platform copy are generated mirrors. Synchronize them with
 `python3 scripts/sync_contract_mirrors.py --platform-root ../myota-platform`.

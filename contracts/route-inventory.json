@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "0d562660b760ae82b1ec58ecebecce3aae8029e35b4c9eceb7d85821308b1864",
+  "canonicalSha256": "0a9e3e522e9efbc536f649987ecdb233d62623c0df464cf917d1584ae319f811",
   "contractOperations": [
     {
       "method": "GET",
@@ -289,6 +289,26 @@
       "method": "POST",
       "operationId": "confirmGeodataEntityDeletionJob",
       "path": "/v1/geodata/entity-deletion-jobs/{jobId}/confirm"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/geodata/import-uploads"
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/geodata/import-uploads/{uploadId}"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/geodata/import-uploads/{uploadId}"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/geodata/import-uploads/{uploadId}/complete"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/geodata/import-uploads/{uploadId}/parts/{partNumber}"
     },
     {
       "method": "GET",
@@ -1949,6 +1969,12 @@
     {
       "file": "geodata.py",
       "method": "DELETE",
+      "path": "/v1/geodata/import-uploads/{uploadId}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "DELETE",
       "path": "/v1/geodata/load-test-runs/{testRunId}",
       "service": "geodata"
     },
@@ -1998,6 +2024,12 @@
       "file": "geodata.py",
       "method": "GET",
       "path": "/v1/geodata/entity-deletion-jobs/{jobId}",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "GET",
+      "path": "/v1/geodata/import-uploads/{uploadId}",
       "service": "geodata"
     },
     {
@@ -2154,6 +2186,30 @@
       "file": "geodata.py",
       "method": "POST",
       "path": "/v1/geodata/entity-deletion-jobs/{jobId}/confirm",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/import-uploads",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/import-uploads/{uploadId}/complete",
+      "service": "geodata"
+    },
+    {
+      "file": "common.py",
+      "method": "POST",
+      "path": "/v1/geodata/import-uploads/{uploadId}/parts/{partNumber}",
+      "service": "common"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/import-uploads/{uploadId}/parts/{partNumber}",
       "service": "geodata"
     },
     {
