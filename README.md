@@ -30,21 +30,23 @@ Phase 0 is frozen. The canonical file is `contracts/openapi.yaml`; the root
 file and the platform copy are generated mirrors. Synchronize them with
 `python3 scripts/sync_contract_mirrors.py --platform-root ../myota-platform`.
 Run the route and contract checks with
-`python3 scripts/check_contract_phase0.py --canonical contracts/openapi.yaml --mirror openapi.yaml --mirror ../myota-platform/contracts/openapi.yaml --service-root ../myota-deploy/services --semantic-baseline contracts/semantic-duplicates.json --inventory-out contracts/route-inventory.json`.
+`python3 scripts/check_contract_phase0.py --canonical contracts/openapi.yaml --mirror openapi.yaml --mirror ../myota-platform/contracts/openapi.yaml --service-root ../myota-deploy/services --service-root ../myota-geodata-service --semantic-baseline contracts/semantic-duplicates.json --inventory-out contracts/route-inventory.json`.
 
 The contract repository does not own runtime services or database migrations.
 Deployment and service ownership are documented in the
 [repository map](https://github.com/myota-platform/myota-docs/blob/main/docs/repository-map.md).
 
-## Run the vertical slice
+## Validate contracts and clients
 
 ```bash
-python3 -m unittest discover -s tests -v
-python3 services/dev_server.py
+python3 scripts/check_generated_clients.py
 ```
 
-Contract-focused tests run without the full service stack. Use myota-deploy
-with Colima for an end-to-end API test.
+Run the mirror/route check above with sibling repositories checked out; CI
+uses the same geodata and deployment registries. This repository has no
+runtime dev server. Use `myota-deploy` with Colima for end-to-end API tests.
+The [latest scaling delivery](https://github.com/myota-platform/myota-docs/blob/main/docs/geodata-horizontal-scaling-roadmap.md#latest-delivery-and-evidence--7-october-2026)
+links conditional edits, upload resources and authenticated operations APIs.
 
 See the [project charter](https://github.com/myota-platform/myota-docs/blob/main/docs/project-charter.md)
 and [charter gap analysis](https://github.com/myota-platform/myota-docs/blob/main/docs/charter-gap-analysis.md)
@@ -78,4 +80,5 @@ generated mirrors of `contracts/openapi.yaml`.
 
 ## Source project
 
-The original `ea7klk/mpota` repository remains untouched. Its charter and planned flows are treated as the migration source; see [`docs/migration-from-mpota.md`](docs/migration-from-mpota.md).
+The original `ea7klk/mpota` repository remains untouched. Its planned flows are
+treated as migration context; see the [migration strategy](https://github.com/myota-platform/myota-docs/blob/main/docs/migration-from-mpota.md).
