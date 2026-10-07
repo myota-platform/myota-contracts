@@ -6,6 +6,9 @@ on:
     branches: [main]
 
 jobs:
+  python-quality:
+    uses: myota-platform/.github/.github/workflows/python-quality.yml@main
+
   phase-0:
     name: Reconcile OpenAPI and runtime route registries
     runs-on: ubuntu-latest

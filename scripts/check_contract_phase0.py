@@ -7,6 +7,7 @@ file is YAML.  Phase 0 needs a deterministic drift check without requiring a
 runtime framework or a database, so this script extracts the stable path and
 method declarations from both representations.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -20,15 +21,38 @@ from typing import Any
 
 METHODS = ("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
 REGISTRY_ROUTE = re.compile(
-    r"\(\s*['\"](" + "|".join(METHODS) + r")['\"]\s*,\s*['\"](/v1/[^'\"]+)['\"]\s*\)"
+    r"\(\s*['\"]("
+    + "|".join(METHODS)
+    + r")['\"]\s*,\s*['\"](/v1/[^'\"]+)['\"]\s*\)"
 )
 PATH_LINE = re.compile(r"^  (/v1/[^:]+):\s*$")
-OPERATION_LINE = re.compile(r"^    (get|post|put|patch|delete|options|head):\s*$")
+OPERATION_LINE = re.compile(
+    r"^    (get|post|put|patch|delete|options|head):\s*$"
+)
 OPERATION_ID_LINE = re.compile(r"^\s+operationId:\s*([^\s#]+)")
 ACTION_SEGMENTS = {
-    "archive", "assign", "close", "content", "deactivate", "delete", "draw",
-    "evaluate", "issue", "publish", "recalculate", "refresh", "render", "resolve",
-    "review", "retire", "run", "submit", "unassign", "update", "upload", "verify",
+    "archive",
+    "assign",
+    "close",
+    "content",
+    "deactivate",
+    "delete",
+    "draw",
+    "evaluate",
+    "issue",
+    "publish",
+    "recalculate",
+    "refresh",
+    "render",
+    "resolve",
+    "review",
+    "retire",
+    "run",
+    "submit",
+    "unassign",
+    "update",
+    "upload",
+    "verify",
 }
 
 
@@ -80,7 +104,9 @@ def contract_routes(path: Path) -> tuple[list[dict[str, str]], list[str]]:
         if operation_id_match and current_method:
             current_operation_id = operation_id_match.group(1)
     flush()
-    return sorted(routes, key=lambda item: (item["path"], item["method"])), operation_ids
+    return sorted(
+        routes, key=lambda item: (item["path"], item["method"])
+    ), operation_ids
 
 
 def service_routes(root: Path) -> list[dict[str, str]]:
@@ -90,9 +116,17 @@ def service_routes(root: Path) -> list[dict[str, str]]:
             continue
         content = source.read_text(encoding="utf-8", errors="replace")
         for match in REGISTRY_ROUTE.finditer(content):
-            routes.append({"service": source.stem, "file": str(source.relative_to(root)),
-                           "method": match.group(1), "path": match.group(2)})
-    return sorted(routes, key=lambda item: (item["method"], item["path"], item["file"]))
+            routes.append(
+                {
+                    "service": source.stem,
+                    "file": str(source.relative_to(root)),
+                    "method": match.group(1),
+                    "path": match.group(2),
+                }
+            )
+    return sorted(
+        routes, key=lambda item: (item["method"], item["path"], item["file"])
+    )
 
 
 def semantic_key(method: str, path: str) -> str | None:
@@ -110,7 +144,8 @@ def semantic_duplicates(routes: list[dict[str, str]]) -> list[dict[str, Any]]:
             groups.setdefault(key, []).append(route)
     return [
         {"signature": key, "routes": value}
-        for key, value in sorted(groups.items()) if len({item["path"] for item in value}) > 1
+        for key, value in sorted(groups.items())
+        if len({item["path"] for item in value}) > 1
     ]
 
 
@@ -118,7 +153,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--canonical", type=Path, required=True)
     parser.add_argument("--mirror", action="append", type=Path, default=[])
-    parser.add_argument("--service-root", action="append", type=Path, default=[])
+    parser.add_argument(
+        "--service-root", action="append", type=Path, default=[]
+    )
     parser.add_argument("--semantic-baseline", type=Path)
     parser.add_argument("--inventory-out", type=Path)
     args = parser.parse_args()
@@ -132,57 +169,94 @@ def main() -> int:
 
     contract, operation_ids = contract_routes(args.canonical)
     contract_set = {(item["method"], item["path"]) for item in contract}
-    duplicate_operation_ids = sorted({item for item in operation_ids if operation_ids.count(item) > 1})
+    duplicate_operation_ids = sorted(
+        {item for item in operation_ids if operation_ids.count(item) > 1}
+    )
     if duplicate_operation_ids:
-        errors.append("duplicate OpenAPI operationIds: " + ", ".join(duplicate_operation_ids))
+        errors.append(
+            "duplicate OpenAPI operationIds: "
+            + ", ".join(duplicate_operation_ids)
+        )
 
-    registries = [route for root in args.service_root for route in service_routes(root)]
+    registries = [
+        route for root in args.service_root for route in service_routes(root)
+    ]
     registry_set = {(item["method"], item["path"]) for item in registries}
     missing_contract = sorted(registry_set - contract_set)
     missing_registry = sorted(contract_set - registry_set)
     if missing_contract:
-        errors.append("routes registered by a service but absent from the canonical contract: " +
-                      ", ".join(f"{method} {path}" for method, path in missing_contract))
+        errors.append(
+            "routes registered by a service but absent from the canonical contract: "
+            + ", ".join(
+                f"{method} {path}" for method, path in missing_contract
+            )
+        )
     if missing_registry:
-        errors.append("contract operations without a scanned service registration: " +
-                      ", ".join(f"{method} {path}" for method, path in missing_registry))
+        errors.append(
+            "contract operations without a scanned service registration: "
+            + ", ".join(
+                f"{method} {path}" for method, path in missing_registry
+            )
+        )
 
     semantic_candidates = semantic_duplicates(contract)
     if args.semantic_baseline:
-        baseline = json.loads(args.semantic_baseline.read_text(encoding="utf-8"))
+        baseline = json.loads(
+            args.semantic_baseline.read_text(encoding="utf-8")
+        )
         expected = {
             item["signature"]: sorted(item["paths"])
             for item in baseline.get("candidates", [])
         }
         actual = {
-            item["signature"]: sorted(route["path"] for route in item["routes"])
+            item["signature"]: sorted(
+                route["path"] for route in item["routes"]
+            )
             for item in semantic_candidates
         }
         if expected != actual:
-            errors.append("semantic duplicate candidates differ from the reviewed baseline")
+            errors.append(
+                "semantic duplicate candidates differ from the reviewed baseline"
+            )
 
     inventory = {
         "canonical": str(args.canonical),
         "canonicalSha256": sha256(args.canonical),
         "contractOperations": contract,
         "serviceRoutes": registries,
-        "missingContractRoutes": [{"method": method, "path": path} for method, path in missing_contract],
-        "missingServiceRegistrations": [{"method": method, "path": path} for method, path in missing_registry],
+        "missingContractRoutes": [
+            {"method": method, "path": path}
+            for method, path in missing_contract
+        ],
+        "missingServiceRegistrations": [
+            {"method": method, "path": path}
+            for method, path in missing_registry
+        ],
         "duplicateOperationIds": duplicate_operation_ids,
         "semanticDuplicateCandidates": semantic_candidates,
     }
     if args.inventory_out:
         args.inventory_out.parent.mkdir(parents=True, exist_ok=True)
-        args.inventory_out.write_text(json.dumps(inventory, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({
-        "canonicalSha256": inventory["canonicalSha256"],
-        "contractOperations": len(contract),
-        "serviceRoutes": len(registries),
-        "missingContractRoutes": len(missing_contract),
-        "missingServiceRegistrations": len(missing_registry),
-        "duplicateOperationIds": len(duplicate_operation_ids),
-        "semanticDuplicateCandidates": len(inventory["semanticDuplicateCandidates"]),
-    }, indent=2))
+        args.inventory_out.write_text(
+            json.dumps(inventory, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+    print(
+        json.dumps(
+            {
+                "canonicalSha256": inventory["canonicalSha256"],
+                "contractOperations": len(contract),
+                "serviceRoutes": len(registries),
+                "missingContractRoutes": len(missing_contract),
+                "missingServiceRegistrations": len(missing_registry),
+                "duplicateOperationIds": len(duplicate_operation_ids),
+                "semanticDuplicateCandidates": len(
+                    inventory["semanticDuplicateCandidates"]
+                ),
+            },
+            indent=2,
+        )
+    )
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
