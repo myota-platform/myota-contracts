@@ -20,6 +20,18 @@ export class MyOTAClient {
     return this.request<T>('/v1/operations/jetstream');
   }
 
+  getObjectStorageStatus<T = unknown>(): Promise<T> {
+    return this.request<T>('/v1/operations/object-storage');
+  }
+
+  listObjectStorageSnapshots<T = unknown>(page = 1, pageSize = 20): Promise<T> {
+    return this.request<T>(`/v1/operations/object-storage/snapshots?page=${page}&pageSize=${pageSize}`);
+  }
+
+  getObservabilitySession<T = unknown>(): Promise<T> {
+    return this.request<T>('/v1/operations/observability-session');
+  }
+
   listJetStreamSnapshots<T = unknown>(page = 1, pageSize = 20): Promise<T> {
     return this.request<T>(`/v1/operations/jetstream/snapshots?page=${page}&pageSize=${pageSize}`);
   }

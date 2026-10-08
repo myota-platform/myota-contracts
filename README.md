@@ -8,6 +8,10 @@ dependency-light generated client used by the local integration slice.
 
 ## What works now
 
+- SeaweedFS status and paged sampled-history resources at
+  `/v1/operations/object-storage` and `/v1/operations/object-storage/snapshots`,
+  plus the live-identity-checked `/v1/operations/observability-session` resource
+  for per-user Grafana Editor/Viewer role resolution. Clients cover all three.
 - Permission-checked JetStream status and paged snapshot-history resources at
   `/v1/operations/jetstream` and `/v1/operations/jetstream/snapshots`, with
   nullable unknown measurements rather than invented zero values.

@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "6805dd1eb545e37ef9d57ee8ff783a03e4882d01ab46b18c88dd6f0f3f328fcd",
+  "canonicalSha256": "476a8b7d85afa2d5879a732ae7f9679d06c894bb2aa13d263cd24fb405639d13",
   "contractOperations": [
     {
       "method": "GET",
@@ -536,6 +536,21 @@
       "method": "GET",
       "operationId": "listJetStreamSnapshots",
       "path": "/v1/operations/jetstream/snapshots"
+    },
+    {
+      "method": "GET",
+      "operationId": "getObjectStorageStatus",
+      "path": "/v1/operations/object-storage"
+    },
+    {
+      "method": "GET",
+      "operationId": "listObjectStorageSnapshots",
+      "path": "/v1/operations/object-storage/snapshots"
+    },
+    {
+      "method": "GET",
+      "operationId": "getObservabilitySession",
+      "path": "/v1/operations/observability-session"
     },
     {
       "method": "GET",
@@ -1095,6 +1110,30 @@
       "file": "operations.py",
       "method": "GET",
       "path": "/v1/operations/jetstream/snapshots",
+      "service": "operations"
+    },
+    {
+      "file": "operations.py",
+      "method": "GET",
+      "path": "/v1/operations/object-storage",
+      "service": "operations"
+    },
+    {
+      "file": "operations.py",
+      "method": "GET",
+      "path": "/v1/operations/object-storage/snapshots",
+      "service": "operations"
+    },
+    {
+      "file": "operations.py",
+      "method": "GET",
+      "path": "/v1/operations/observability-session",
+      "service": "operations"
+    },
+    {
+      "file": "operations.py",
+      "method": "GET",
+      "path": "/v1/operations/observability-session",
       "service": "operations"
     },
     {
