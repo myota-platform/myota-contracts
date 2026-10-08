@@ -60,6 +60,10 @@ export class MyOTAClient {
     return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID(), ...(version === undefined ? {} : { 'If-Match': `"${version}"` }) } });
   }
 
+  postGeodataEntityLocationEnrichmentRequest<T = unknown>(entityId: string, body: unknown, version?: number): Promise<T> {
+    return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/location-enrichment-requests`, { method: 'POST', body, headers: { 'Idempotency-Key': crypto.randomUUID(), ...(version === undefined ? {} : { 'If-Match': `"${version}"` }) } });
+  }
+
   putGeodataEntityGeometry<T = unknown>(entityId: string, body: unknown, version?: number): Promise<T> {
     return this.request<T>(`/v1/geodata/entities/${encodeURIComponent(entityId)}/geometry`, { method: 'PUT', body, headers: { 'Idempotency-Key': crypto.randomUUID(), ...(version === undefined ? {} : { 'If-Match': `"${version}"` }) } });
   }

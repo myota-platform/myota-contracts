@@ -168,6 +168,20 @@ class MyOTAClient:
             expected_version=expected_version,
         )
 
+    def post_geodata_entity_location_enrichment_request(
+        self,
+        entity_id: str,
+        body: dict[str, Any],
+        *,
+        expected_version: int | None = None,
+    ) -> dict[str, Any]:
+        return self._write(
+            "POST",
+            f"/v1/geodata/entities/{entity_id}/location-enrichment-requests",
+            body,
+            expected_version=expected_version,
+        )
+
     def put_geodata_entity_geometry(
         self,
         entity_id: str,

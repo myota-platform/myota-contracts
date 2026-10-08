@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "7fc83e4b5a8b56a4a137b2e64904fa182dae139e57d03ed19a0d5288c52c0b10",
+  "canonicalSha256": "6805dd1eb545e37ef9d57ee8ff783a03e4882d01ab46b18c88dd6f0f3f328fcd",
   "contractOperations": [
     {
       "method": "GET",
@@ -257,6 +257,11 @@
     {
       "method": "POST",
       "path": "/v1/geodata/entities/{entityId}/location"
+    },
+    {
+      "method": "POST",
+      "operationId": "postGeodataEntityLocationEnrichmentRequest",
+      "path": "/v1/geodata/entities/{entityId}/location-enrichment-requests"
     },
     {
       "method": "POST",
@@ -2206,6 +2211,12 @@
       "file": "geodata.py",
       "method": "POST",
       "path": "/v1/geodata/entities/{entityId}/location",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "POST",
+      "path": "/v1/geodata/entities/{entityId}/location-enrichment-requests",
       "service": "geodata"
     },
     {
