@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "9eb8162712bfd8b0a170967d489df86b4c6ecd1f84b0c84fd3f229127a4e8fcb",
+  "canonicalSha256": "7fc83e4b5a8b56a4a137b2e64904fa182dae139e57d03ed19a0d5288c52c0b10",
   "contractOperations": [
     {
       "method": "GET",
@@ -2014,6 +2014,12 @@
       "file": "geodata.py",
       "method": "PUT",
       "path": "/v1/geodata/entities/{entityId}/geometry",
+      "service": "geodata"
+    },
+    {
+      "file": "geodata.py",
+      "method": "PUT",
+      "path": "/v1/geodata/imports/{runId}/cancellation",
       "service": "geodata"
     },
     {
