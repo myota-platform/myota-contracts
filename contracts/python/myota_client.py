@@ -20,6 +20,22 @@ class ApiError(Exception):
 
 
 class MyOTAClient:
+    def get_award_asset_content(self, asset_id: str) -> dict[str, Any]:
+        return self.request("GET", f"/v1/awards/assets/{asset_id}/content")
+
+    def put_award_asset_content(
+        self, asset_id: str, content: bytes, media_type: str
+    ) -> dict[str, Any]:
+        return self.request(
+            "PUT",
+            f"/v1/awards/assets/{asset_id}/content",
+            content,
+            content_type=media_type,
+        )
+
+    def create_award_preview(self, body: dict[str, Any]) -> dict[str, Any]:
+        return self.request("POST", "/v1/awards/previews", body)
+
     def __init__(
         self,
         base_url: str,
@@ -36,22 +52,29 @@ class MyOTAClient:
         self,
         method: str,
         path: str,
-        body: dict[str, Any] | None = None,
+        body: dict[str, Any] | bytes | None = None,
         idempotency_key: str | None = None,
         query: Mapping[str, Any] | None = None,
         expected_version: int | None = None,
+        content_type: str = "application/json",
     ) -> dict[str, Any]:
         if query:
             from urllib.parse import urlencode
 
             path = f"{path}?{urlencode({key: value for key, value in query.items() if value is not None})}"
-        payload = None if body is None else json.dumps(body).encode()
+        payload = (
+            body
+            if isinstance(body, bytes)
+            else None
+            if body is None
+            else json.dumps(body).encode()
+        )
         headers = {
             "Accept": "application/json",
             "X-Request-ID": "client-generated",
         }
         if payload is not None:
-            headers["Content-Type"] = "application/json"
+            headers["Content-Type"] = content_type
         if idempotency_key:
             headers["Idempotency-Key"] = idempotency_key
         if expected_version is not None:

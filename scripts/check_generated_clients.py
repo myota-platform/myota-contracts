@@ -5,6 +5,9 @@ from pathlib import Path
 import sys
 
 REQUIRED = {
+    "getAwardAssetContent",
+    "putAwardAssetContent",
+    "createAwardPreview",
     "getObjectStorageStatus",
     "listObjectStorageSnapshots",
     "getObservabilitySession",
@@ -37,6 +40,9 @@ targets = [
 names = {
     targets[0]: REQUIRED,
     targets[1]: {
+        "get_award_asset_content",
+        "put_award_asset_content",
+        "create_award_preview",
         "get_object_storage_status",
         "list_object_storage_snapshots",
         "get_observability_session",

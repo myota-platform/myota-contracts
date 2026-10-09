@@ -8,6 +8,10 @@ dependency-light generated client used by the local integration slice.
 
 ## What works now
 
+- Authenticated binary award artwork replacement/read resources and bounded
+  transient PDF previews. Draft schemas retain manager/signature/effective-date
+  fields and custom text. Both clients expose these preferred methods. See the
+  [designer resource guide](https://github.com/myota-platform/myota-docs/blob/main/docs/programme-and-award-design.md).
 - SeaweedFS status and paged sampled-history resources at
   `/v1/operations/object-storage` and `/v1/operations/object-storage/snapshots`,
   plus the live-identity-checked `/v1/operations/observability-session` resource

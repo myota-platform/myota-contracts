@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "476a8b7d85afa2d5879a732ae7f9679d06c894bb2aa13d263cd24fb405639d13",
+  "canonicalSha256": "e3c652d59772831b7d7f15471f08e35e62f28cb1a0335db09aeac82944e971eb",
   "contractOperations": [
     {
       "method": "GET",
@@ -74,7 +74,17 @@
       "path": "/v1/awards/assets"
     },
     {
+      "method": "GET",
+      "operationId": "getAwardAssetContent",
+      "path": "/v1/awards/assets/{assetId}/content"
+    },
+    {
       "method": "POST",
+      "path": "/v1/awards/assets/{assetId}/content"
+    },
+    {
+      "method": "PUT",
+      "operationId": "putAwardAssetContent",
       "path": "/v1/awards/assets/{assetId}/content"
     },
     {
@@ -121,6 +131,11 @@
       "method": "GET",
       "operationId": "getCertificateRenderJob",
       "path": "/v1/awards/issuances/{issuanceId}/render-jobs/{jobId}"
+    },
+    {
+      "method": "POST",
+      "operationId": "createAwardPreview",
+      "path": "/v1/awards/previews"
     },
     {
       "method": "GET",
@@ -905,6 +920,12 @@
     {
       "file": "awards.py",
       "method": "GET",
+      "path": "/v1/awards/assets/{assetId}/content",
+      "service": "awards"
+    },
+    {
+      "file": "awards.py",
+      "method": "GET",
       "path": "/v1/awards/evaluation-jobs/{jobId}",
       "service": "awards"
     },
@@ -1386,6 +1407,18 @@
       "file": "awards.py",
       "method": "POST",
       "path": "/v1/awards/issuances/{issuanceId}/render-jobs",
+      "service": "awards"
+    },
+    {
+      "file": "activity.py",
+      "method": "POST",
+      "path": "/v1/awards/previews",
+      "service": "activity"
+    },
+    {
+      "file": "awards.py",
+      "method": "POST",
+      "path": "/v1/awards/previews",
       "service": "awards"
     },
     {
@@ -2047,6 +2080,18 @@
       "method": "POST",
       "path": "/v1/statistics/rebuild-jobs",
       "service": "activity"
+    },
+    {
+      "file": "activity.py",
+      "method": "PUT",
+      "path": "/v1/awards/assets/{assetId}/content",
+      "service": "activity"
+    },
+    {
+      "file": "awards.py",
+      "method": "PUT",
+      "path": "/v1/awards/assets/{assetId}/content",
+      "service": "awards"
     },
     {
       "file": "geodata.py",

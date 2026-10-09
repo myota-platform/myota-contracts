@@ -16,6 +16,18 @@ export type ApiRequest = <T>(path: string, options?: RequestOptions) => Promise<
 export class MyOTAClient {
   constructor(private readonly request: ApiRequest) {}
 
+  getAwardAssetContent<T = unknown>(id: string): Promise<T> {
+    return this.request<T>(`/v1/awards/assets/${encodeURIComponent(id)}/content`);
+  }
+
+  putAwardAssetContent<T = unknown>(id: string, content: Blob, mediaType: string): Promise<T> {
+    return this.request<T>(`/v1/awards/assets/${encodeURIComponent(id)}/content`, { method: 'PUT', body: content, headers: { 'Content-Type': mediaType } });
+  }
+
+  createAwardPreview<T = unknown>(body: unknown): Promise<T> {
+    return this.request<T>('/v1/awards/previews', { method: 'POST', body });
+  }
+
   getJetStreamStatus<T = unknown>(): Promise<T> {
     return this.request<T>('/v1/operations/jetstream');
   }
