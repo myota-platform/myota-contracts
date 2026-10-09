@@ -14,7 +14,10 @@ def main() -> int:
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     canonical = root / "contracts" / "openapi.yaml"
-    for mirror in (root / "openapi.yaml", args.platform_root / "contracts" / "openapi.yaml"):
+    for mirror in (
+        root / "openapi.yaml",
+        args.platform_root / "contracts" / "openapi.yaml",
+    ):
         mirror.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(canonical, mirror)
         print(f"synced {mirror}")

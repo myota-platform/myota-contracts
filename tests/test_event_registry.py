@@ -10,11 +10,17 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class EventRegistryTests(unittest.TestCase):
-    def test_registry_entries_have_unique_subjects_and_checked_in_schemas(self):
+    def test_registry_entries_have_unique_subjects_and_checked_in_schemas(
+        self,
+    ):
         registry = json.loads(
-            (ROOT / "contracts/event-registry.json").read_text(encoding="utf-8")
+            (ROOT / "contracts/event-registry.json").read_text(
+                encoding="utf-8"
+            )
         )
-        subjects = [item["subject"] for item in registry["events"] + registry["work"]]
+        subjects = [
+            item["subject"] for item in registry["events"] + registry["work"]
+        ]
         self.assertEqual(len(subjects), len(set(subjects)))
         self.assertEqual(len(registry["events"]), 68)
         self.assertEqual(len(registry["work"]), 10)
@@ -34,14 +40,25 @@ class EventRegistryTests(unittest.TestCase):
             },
         )
         for event in registry["events"]:
-            self.assertEqual(event["subject"], f"myota.events.{event['eventType']}")
+            self.assertEqual(
+                event["subject"], f"myota.events.{event['eventType']}"
+            )
             schema_path = ROOT / "contracts" / event["schema"]
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
-            self.assertEqual(schema["allOf"][1]["properties"]["eventType"]["const"], event["eventType"])
-            self.assertEqual(event["payloadEvidence"], "pending-owner-schema-review")
+            self.assertEqual(
+                schema["allOf"][1]["properties"]["eventType"]["const"],
+                event["eventType"],
+            )
+            self.assertEqual(
+                event["payloadEvidence"], "pending-owner-schema-review"
+            )
         for work in registry["work"]:
-            self.assertIn(work["subject"].split(".")[2], {"activity", "geodata"})
-            self.assertRegex(work["workType"], r"^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)+\.v1$")
+            self.assertIn(
+                work["subject"].split(".")[2], {"activity", "geodata"}
+            )
+            self.assertRegex(
+                work["workType"], r"^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)+\.v1$"
+            )
             self.assertTrue(re.fullmatch(r"[a-z0-9-]+-v1", work["durable"]))
 
     def test_outer_event_envelope_rejects_relay_mutable_fields(self):

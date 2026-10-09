@@ -25,7 +25,10 @@ def event_schema(event_type: str) -> dict:
         "title": f"{event_type} envelope v1",
         "allOf": [
             {"$ref": "../event-envelope.schema.json"},
-            {"type": "object", "properties": {"eventType": {"const": event_type}}},
+            {
+                "type": "object",
+                "properties": {"eventType": {"const": event_type}},
+            },
         ],
     }
 
@@ -38,7 +41,10 @@ def main() -> None:
     for event in events:
         path = ROOT / "contracts" / event["schema"]
         expected.add(path)
-        path.write_text(json.dumps(event_schema(event["eventType"]), indent=2) + "\n", encoding="utf-8")
+        path.write_text(
+            json.dumps(event_schema(event["eventType"]), indent=2) + "\n",
+            encoding="utf-8",
+        )
     for stale in SCHEMA_DIR.glob("*.schema.json"):
         if stale not in expected:
             stale.unlink()
