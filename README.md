@@ -8,6 +8,9 @@ dependency-light generated client used by the local integration slice.
 
 ## What works now
 
+- The global contract time policy is UTC. Offset-bearing inputs normalize to
+  the same UTC instant; legacy unqualified date-times mean UTC rather than
+  browser/server local time. See the [UTC policy](https://github.com/myota-platform/myota-docs/blob/main/docs/utc-time-policy.md).
 - Authenticated binary award artwork replacement/read resources and bounded
   transient PDF previews. Draft schemas retain manager/signature/effective-date
   fields and custom text. Both clients expose these preferred methods. See the
