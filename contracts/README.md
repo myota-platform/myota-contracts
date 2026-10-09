@@ -8,6 +8,11 @@ version selected by the consuming repository.
 The repository-root `openapi.yaml` and `myota-platform/contracts/openapi.yaml`
 files are generated mirrors. Do not edit them directly; run
 `python3 scripts/sync_contract_mirrors.py --platform-root ../myota-platform`
+
+The event registry and JSON Schemas in `event-registry.json` and `schemas/`
+are authoritative here. The mirror sync copies them to `myota-platform` along
+with `events.md`; payload shapes marked `pending-owner-schema-review` are not
+yet a complete producer compatibility gate.
 after changing the canonical contract.
 
 Geodata payloads use the shared Master data category catalogue: `entityTypes` is

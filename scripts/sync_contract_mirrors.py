@@ -21,6 +21,23 @@ def main() -> int:
         mirror.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(canonical, mirror)
         print(f"synced {mirror}")
+    source_contracts = root / "contracts"
+    mirror_contracts = args.platform_root / "contracts"
+    for relative in (
+        Path("events.md"),
+        Path("event-registry.json"),
+        Path("schemas"),
+    ):
+        source = source_contracts / relative
+        mirror = mirror_contracts / relative
+        if source.is_dir():
+            if mirror.exists():
+                shutil.rmtree(mirror)
+            shutil.copytree(source, mirror)
+        else:
+            mirror.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, mirror)
+        print(f"synced {mirror}")
     return 0
 
 
