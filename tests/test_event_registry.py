@@ -246,19 +246,17 @@ class EventRegistryTests(unittest.TestCase):
                 else registry["geodataWorkStream"]
             )
             self.assertEqual(work["stream"], stream)
-            self.assertEqual(
-                work["subject"], f"myota.work.{work['workType']}"
-            )
+            self.assertEqual(work["subject"], f"myota.work.{work['workType']}")
             self.assertTrue(
-                work["subject"].startswith(
-                    f"myota.work.{owner_namespace}."
-                )
+                work["subject"].startswith(f"myota.work.{owner_namespace}.")
             )
             self.assertRegex(
                 work["workType"], r"^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)+\.v1$"
             )
             self.assertTrue(re.fullmatch(r"[a-z0-9-]+-v1", work["durable"]))
-            self.assertEqual(work["schema"], "schemas/work-command.schema.json")
+            self.assertEqual(
+                work["schema"], "schemas/work-command.schema.json"
+            )
             self.assertTrue((ROOT / "contracts" / work["schema"]).is_file())
             self.assertIn("payloadEvidence", work)
 
@@ -267,7 +265,9 @@ class EventRegistryTests(unittest.TestCase):
         deploy_root = ROOT.parent / "myota-deploy"
         topology_source = deploy_root / "services/jetstream_topology.py"
         if not topology_source.is_file():
-            self.skipTest("deploy repository is not checked out beside contracts")
+            self.skipTest(
+                "deploy repository is not checked out beside contracts"
+            )
         source = topology_source.read_text(encoding="utf-8")
         registered = json.loads(
             (ROOT / "contracts/event-registry.json").read_text(
