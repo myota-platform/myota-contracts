@@ -83,6 +83,12 @@ jobs:
         working-directory: myota-contracts
         run: python3 -m unittest discover -s tests -v
 
+      - name: Verify platform contracts mirror
+        working-directory: myota-contracts
+        run: |
+          cmp contracts/event-registry.json ../myota-platform/contracts/event-registry.json
+          cmp scripts/generate_deploy_event_registry.py ../myota-platform/scripts/generate_deploy_event_registry.py
+
       - name: Regenerate event and work schemas
         working-directory: myota-contracts
         run: |
