@@ -39,9 +39,9 @@ def runtime_catalog(registry: dict) -> dict:
             legacy_routes[event_type] = {
                 "subject": subject,
                 "workType": work["workType"],
-                "producers": registry["producerNamesByOwner"][work["owner"]],
                 "workIdField": work["workIdField"],
                 "payloadFields": work["payloadSchema"]["required"],
+                "producers": registry["producerNamesByOwner"][work["owner"]],
             }
     return {
         "registryVersion": registry["registryVersion"],
