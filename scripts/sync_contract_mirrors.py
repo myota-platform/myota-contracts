@@ -43,12 +43,18 @@ def main() -> int:
             shutil.copyfile(source, mirror)
         print(f"synced {mirror}")
     catalog = runtime_catalog(
-        json.loads((source_contracts / "event-registry.json").read_text(encoding="utf-8"))
+        json.loads(
+            (source_contracts / "event-registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
     )
     catalog_content = json.dumps(catalog, indent=2) + "\n"
     destinations = [args.platform_root / "services" / "event_registry.json"]
     if args.deploy_root:
-        destinations.append(args.deploy_root / "services" / "event_registry.json")
+        destinations.append(
+            args.deploy_root / "services" / "event_registry.json"
+        )
     for destination in destinations:
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(catalog_content, encoding="utf-8")
