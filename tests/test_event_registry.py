@@ -295,6 +295,17 @@ class EventRegistryTests(unittest.TestCase):
         self.assertFalse(schema["additionalProperties"])
         self.assertNotIn("attempts", schema["properties"])
         self.assertIn("causationId", schema["properties"])
+        self.assertEqual(schema["properties"]["eventId"]["format"], "uuid")
+        self.assertEqual(schema["properties"]["occurredAt"]["pattern"], "Z$")
+        work_schema = json.loads(
+            (ROOT / "contracts/schemas/work-command.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(work_schema["properties"]["workId"]["format"], "uuid")
+        self.assertEqual(
+            work_schema["properties"]["createdAt"]["pattern"], "Z$"
+        )
 
 
 if __name__ == "__main__":
