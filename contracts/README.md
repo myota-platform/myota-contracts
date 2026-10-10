@@ -16,12 +16,15 @@ owning repository. The 19 Identity, 12 Programme, 10 Activity, and 27 Geodata fa
 source-derived schemas from their authoritative producer call sites; schemas allow additive
 fields and record data classification. Dynamic rule/configuration and nested
 award asset shapes remain unconstrained when producer inputs are extensible.
-These contracts still require joint owner/privacy review before they can gate a
-producer. Geodata schemas are source-derived but still require owner/privacy review. The
-preprocessing fact currently carries the result object from its call site, which
-contains internal `_records` and `_status` fields; payload minimization and
-privacy review must precede producer enforcement. Operations payloads marked
-`pending-source-payload-review` remain open. Run
+The delegated Phase 1 review has dispositioned all 68 source-derived fact schemas as
+inventory contracts, with producer enforcement still conditional on minimal
+projections, prohibited-field and payload-size checks, compatibility fixtures,
+and consumer evidence. See the [joint review record](https://github.com/myota-platform/myota-docs/blob/main/docs/operations/messaging/evidence/phase1-joint-review-2026-10-10.md).
+The Geodata preprocessing fact still carries the full result, including internal
+`_records` and `_status`; keep v1 source-accurate and introduce a compact versioned
+projection before enforcement. The Phase 0 audit found no Operations fact
+producer, so no Operations payload schema is required unless that service begins
+publishing facts. Run
 `python3 scripts/audit_workspace_event_sources.py --workspace-root ..` from a
 full workspace to verify source references and ensure Python event-like source
 literals have a fact or legacy-work disposition.
