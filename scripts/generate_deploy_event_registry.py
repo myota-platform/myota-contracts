@@ -22,7 +22,14 @@ def runtime_catalog(registry: dict) -> dict:
         for item in registry["events"]
     }
     legacy_routes = {}
+    target_work_routes = {}
     for work in registry["work"]:
+        target_work_routes[work["workType"]] = {
+            "subject": work["subject"],
+            "stream": work["stream"],
+            "durable": work["durable"],
+            "producers": registry["producerNamesByOwner"][work["owner"]],
+        }
         subject = work.get("legacySubject")
         if not subject:
             continue
@@ -38,6 +45,7 @@ def runtime_catalog(registry: dict) -> dict:
         "registryVersion": registry["registryVersion"],
         "events": events,
         "legacyWorkRoutes": legacy_routes,
+        "targetWorkRoutes": target_work_routes,
     }
 
 

@@ -362,6 +362,27 @@ class EventRegistryTests(unittest.TestCase):
             self.assertIn(f'"{work["durable"]}"', source)
             self.assertIn(f'"{work["subject"]}"', source)
 
+    def test_runtime_catalog_contains_registered_target_work_routes(self):
+        registry = json.loads(
+            (ROOT / "contracts/event-registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        routes = runtime_catalog(registry)["targetWorkRoutes"]
+        self.assertEqual(
+            set(routes), {item["workType"] for item in registry["work"]}
+        )
+        for work in registry["work"]:
+            self.assertEqual(
+                routes[work["workType"]]["subject"], work["subject"]
+            )
+            self.assertEqual(
+                routes[work["workType"]]["stream"], work["stream"]
+            )
+            self.assertEqual(
+                routes[work["workType"]]["durable"], work["durable"]
+            )
+
     def test_activity_notification_filters_match_registry_and_provisioner(
         self,
     ):

@@ -63,11 +63,12 @@ def main() -> int:
     workspace = args.workspace_root.resolve()
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
     facts = registry["events"]
-    work_source_types = {
+    work_source_types = {work["workType"] for work in registry["work"]}
+    work_source_types.update(
         event_type
         for work in registry["work"]
         for event_type in work.get("sourceEventTypes", [])
-    }
+    )
     registered = {event["eventType"] for event in facts}
     discovered: set[str] = set()
     errors: list[str] = []
