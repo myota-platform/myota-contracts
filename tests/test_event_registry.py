@@ -262,10 +262,47 @@ class EventRegistryTests(unittest.TestCase):
             )
             self.assertTrue(re.fullmatch(r"[a-z0-9-]+-v1", work["durable"]))
             self.assertEqual(
-                work["schema"], "schemas/work-command.schema.json"
+                work["schema"],
+                f"schemas/work/{work['workType'].replace('.', '-')}.schema.json",
             )
-            self.assertTrue((ROOT / "contracts" / work["schema"]).is_file())
-            self.assertIn("payloadEvidence", work)
+            schema_path = ROOT / "contracts" / work["schema"]
+            self.assertTrue(schema_path.is_file())
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+            payload = schema["allOf"][1]["properties"]["payload"]
+            self.assertEqual(payload, work["payloadSchema"])
+            self.assertEqual(payload["type"], "object")
+            self.assertFalse(payload["additionalProperties"])
+            self.assertTrue(payload["required"])
+            self.assertEqual(schema["x-work-id-source"], work["workIdSource"])
+            for key in ("producerSources", "consumerSources"):
+                self.assertTrue(work[key])
+                for source in work[key]:
+                    repository, relative_path = source.split("/", 1)
+                    self.assertEqual(
+                        repository, OWNER_REPOSITORIES[work["owner"]]
+                    )
+                    self.assertTrue(
+                        (ROOT.parent / repository / relative_path).is_file()
+                    )
+            if work["owner"] == "activity-service":
+                self.assertEqual(set(payload["properties"]), {"jobId"})
+                self.assertLessEqual(
+                    payload["properties"]["jobId"]["maxLength"], 36
+                )
+            elif work["workType"] == "geodata.location-enrichment.v1":
+                self.assertEqual(
+                    set(payload["properties"]),
+                    {
+                        "entityId",
+                        "requestId",
+                        "geometryHash",
+                        "onlyMissing",
+                        "reason",
+                    },
+                )
+                self.assertLessEqual(
+                    payload["properties"]["reason"]["maxLength"], 80
+                )
 
     def test_registered_work_durables_match_deploy_owned_topology(self):
         """Keep the contracts registry and provisioned command filters aligned."""
@@ -306,6 +343,38 @@ class EventRegistryTests(unittest.TestCase):
         self.assertEqual(
             work_schema["properties"]["createdAt"]["pattern"], "Z$"
         )
+
+    def test_work_payloads_are_bounded_database_references(self):
+        registry = json.loads(
+            (ROOT / "contracts/event-registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(len(registry["work"]), 10)
+        for work in registry["work"]:
+            payload = work["payloadSchema"]
+            self.assertFalse(payload["additionalProperties"])
+            self.assertTrue(payload["required"])
+            self.assertTrue(
+                work["workIdSource"].endswith(".id")
+                or "RequestId" in work["workIdSource"]
+                or "[jobId]" in work["workIdSource"]
+            )
+            self.assertTrue(work["producerSources"])
+            self.assertTrue(work["consumerSources"])
+            serialized = json.dumps(payload).lower()
+            for forbidden in (
+                "sourceDocument",
+                "featureCollection",
+                "qsoBatch",
+                "certificateBytes",
+            ):
+                self.assertNotIn(forbidden.lower(), serialized)
+            for name, definition in payload["properties"].items():
+                if definition.get("type") == "string":
+                    self.assertLessEqual(
+                        definition.get("maxLength", 0), 80, name
+                    )
 
 
 if __name__ == "__main__":

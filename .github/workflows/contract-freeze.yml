@@ -83,6 +83,12 @@ jobs:
         working-directory: myota-contracts
         run: python3 -m unittest discover -s tests -v
 
+      - name: Regenerate event and work schemas
+        working-directory: myota-contracts
+        run: |
+          python3 scripts/generate_event_registry.py
+          git diff --exit-code -- contracts/schemas
+
       - name: Validate YAML syntax
         working-directory: myota-contracts
         run: ruby -e 'require "yaml"; YAML.load_file("contracts/openapi.yaml"); YAML.load_file("contracts/semantic-duplicates.json")'

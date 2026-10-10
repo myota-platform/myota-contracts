@@ -47,6 +47,17 @@ The contract repository does not own runtime services or database migrations.
 Deployment and service ownership are documented in the
 [repository map](https://github.com/myota-platform/myota-docs/blob/main/docs/repository-map.md).
 
+## NATS event/work contracts
+
+Phase 1 defines the versioned event/work envelopes and registry for 68 current
+facts and ten selected work commands. The generated payload schemas record
+source-observed shapes and data classifications; the project team's joint
+review accepts them as inventory contracts only. Producer enforcement remains
+gated on per-event projections, payload-size and compatibility fixtures, and
+the compatible successor for the current Geodata preprocessed payload. The
+target JetStream topology is not deployed; see the [migration plan](https://github.com/myota-platform/myota-docs/blob/main/docs/operations/messaging/nats-event-migration-plan.md)
+and [Phase 1 completion evidence](https://github.com/myota-platform/myota-docs/blob/main/docs/operations/messaging/evidence/phase1-completion-2026-10-10.md).
+
 ## Validate contracts and clients
 
 ```bash

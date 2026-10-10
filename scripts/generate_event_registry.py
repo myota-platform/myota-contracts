@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "contracts/event-registry.json"
 SCHEMA_DIR = ROOT / "contracts/schemas/events"
+WORK_SCHEMA_DIR = ROOT / "contracts/schemas/work"
 
 
 def event_schema(event: dict) -> dict:
@@ -36,22 +37,61 @@ def event_schema(event: dict) -> dict:
     return schema
 
 
+def work_schema(work: dict) -> dict:
+    work_type = work["workType"]
+    safe = work_type.replace(".", "-")
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": f"https://github.com/myota-platform/myota-contracts/contracts/schemas/work/{safe}.schema.json",
+        "title": f"{work_type} command envelope v1",
+        "allOf": [
+            {"$ref": "../work-command.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "workType": {"const": work_type},
+                    "payload": work["payloadSchema"],
+                },
+            },
+        ],
+        "x-payload-evidence": work["payloadEvidence"],
+        "x-work-id-source": work["workIdSource"],
+        "x-producer-sources": work["producerSources"],
+        "x-consumer-sources": work["consumerSources"],
+    }
+
+
 def main() -> None:
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
     events = registry["events"]
+    work = registry["work"]
     SCHEMA_DIR.mkdir(parents=True, exist_ok=True)
-    expected = set()
+    WORK_SCHEMA_DIR.mkdir(parents=True, exist_ok=True)
+    expected_events = set()
     for event in events:
         path = ROOT / "contracts" / event["schema"]
-        expected.add(path)
+        expected_events.add(path)
         path.write_text(
             json.dumps(event_schema(event), indent=2) + "\n",
             encoding="utf-8",
         )
+    expected_work = set()
+    for item in work:
+        path = ROOT / "contracts" / item["schema"]
+        expected_work.add(path)
+        path.write_text(
+            json.dumps(work_schema(item), indent=2) + "\n",
+            encoding="utf-8",
+        )
     for stale in SCHEMA_DIR.glob("*.schema.json"):
-        if stale not in expected:
+        if stale not in expected_events:
             stale.unlink()
-    print(f"generated {len(events)} per-event schemas from {REGISTRY}")
+    for stale in WORK_SCHEMA_DIR.glob("*.schema.json"):
+        if stale not in expected_work:
+            stale.unlink()
+    print(
+        f"generated {len(events)} fact and {len(work)} work schemas from {REGISTRY}"
+    )
 
 
 if __name__ == "__main__":
