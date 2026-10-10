@@ -92,10 +92,12 @@ class EventRegistryTests(unittest.TestCase):
             },
         )
         for event in registry["events"]:
+            self.assertEqual(event["class"], "domain-fact")
             self.assertEqual(
                 event["subject"], f"myota.events.{event['eventType']}"
             )
             self.assertIn("consumerGroups", event)
+            self.assertIsInstance(event["consumerGroups"], list)
             self.assertIn("disposition", event)
             self.assertTrue(event["disposition"].strip())
             sources = event["producerSources"]
@@ -235,6 +237,7 @@ class EventRegistryTests(unittest.TestCase):
                 required_properties.issubset(payload["properties"])
             )
         for work in registry["work"]:
+            self.assertEqual(work["class"], "work-command")
             owner_namespace = (
                 "activity"
                 if work["owner"] == "activity-service"
@@ -247,6 +250,10 @@ class EventRegistryTests(unittest.TestCase):
             )
             self.assertEqual(work["stream"], stream)
             self.assertEqual(work["subject"], f"myota.work.{work['workType']}")
+            self.assertEqual(
+                work["subject"].split(".", 3)[:3],
+                ["myota", "work", owner_namespace],
+            )
             self.assertTrue(
                 work["subject"].startswith(f"myota.work.{owner_namespace}.")
             )
