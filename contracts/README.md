@@ -11,9 +11,12 @@ files are generated mirrors. Do not edit them directly; run
 
 The event registry and JSON Schemas in `event-registry.json` and `schemas/`
 are authoritative here. The mirror sync copies them to `myota-platform` along
-with `events.md`; payload shapes marked `pending-owner-schema-review` are not
-yet a complete producer compatibility gate.
-after changing the canonical contract.
+with `events.md`. Each fact records its producer source files relative to the
+owning repository. Payload shapes marked `pending-source-payload-review` are not
+yet a complete producer compatibility gate. Run
+`python3 scripts/audit_workspace_event_sources.py --workspace-root ..` from a
+full workspace to verify source references and ensure event-like source
+literals have a fact or legacy-work disposition.
 
 Geodata payloads use the shared Master data category catalogue: `entityTypes` is
 an ordered, non-empty list, `entityTypeCodes` is a compatibility alias, and

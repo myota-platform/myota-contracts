@@ -7,6 +7,13 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+OWNER_REPOSITORIES = {
+    "identity-service": "myota-identity-service",
+    "programme-service": "myota-programme-service",
+    "activity-service": "myota-activity-service",
+    "geodata-service": "myota-geodata-service",
+    "operations-service": "myota-operations-service",
+}
 
 
 class EventRegistryTests(unittest.TestCase):
@@ -43,6 +50,15 @@ class EventRegistryTests(unittest.TestCase):
             self.assertEqual(
                 event["subject"], f"myota.events.{event['eventType']}"
             )
+            sources = event["producerSources"]
+            self.assertTrue(sources)
+            self.assertEqual(sources, sorted(set(sources)))
+            for source in sources:
+                repository, relative_path = source.split("/", 1)
+                self.assertEqual(
+                    repository, OWNER_REPOSITORIES[event["owner"]]
+                )
+                self.assertTrue(relative_path.endswith(".py"))
             schema_path = ROOT / "contracts" / event["schema"]
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
             self.assertEqual(
@@ -50,7 +66,7 @@ class EventRegistryTests(unittest.TestCase):
                 event["eventType"],
             )
             self.assertEqual(
-                event["payloadEvidence"], "pending-owner-schema-review"
+                event["payloadEvidence"], "pending-source-payload-review"
             )
         for work in registry["work"]:
             self.assertIn(

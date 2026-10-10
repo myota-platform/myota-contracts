@@ -33,6 +33,34 @@ jobs:
           path: myota-geodata-service
           token: ${{ github.token }}
 
+      - name: Check out identity event producers
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-identity-service
+          path: myota-identity-service
+          token: ${{ github.token }}
+
+      - name: Check out programme event producers
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-programme-service
+          path: myota-programme-service
+          token: ${{ github.token }}
+
+      - name: Check out activity event producers
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-activity-service
+          path: myota-activity-service
+          token: ${{ github.token }}
+
+      - name: Check out operations event producers
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-operations-service
+          path: myota-operations-service
+          token: ${{ github.token }}
+
       - name: Check out platform contract mirror
         uses: actions/checkout@v4
         with:
@@ -44,6 +72,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Audit registered event producer sources
+        working-directory: myota-contracts
+        run: >-
+          python3 scripts/audit_workspace_event_sources.py
+          --workspace-root ..
 
       - name: Validate YAML syntax
         working-directory: myota-contracts
