@@ -362,7 +362,9 @@ class EventRegistryTests(unittest.TestCase):
             self.assertIn(f'"{work["durable"]}"', source)
             self.assertIn(f'"{work["subject"]}"', source)
 
-    def test_activity_notification_filters_match_registry_and_provisioner(self):
+    def test_activity_notification_filters_match_registry_and_provisioner(
+        self,
+    ):
         registry = json.loads(
             (ROOT / "contracts/event-registry.json").read_text(
                 encoding="utf-8"
@@ -375,10 +377,13 @@ class EventRegistryTests(unittest.TestCase):
         )
         activity_root = ROOT.parent / "myota-activity-service"
         deploy_root = ROOT.parent / "myota-deploy"
-        if not (activity_root / "event_consumer.py").is_file() or not (
-            deploy_root / "services/outbox_worker.py"
-        ).is_file():
-            self.skipTest("Activity and deploy repositories are not checked out")
+        if (
+            not (activity_root / "event_consumer.py").is_file()
+            or not (deploy_root / "services/outbox_worker.py").is_file()
+        ):
+            self.skipTest(
+                "Activity and deploy repositories are not checked out"
+            )
 
         def assigned_filters(path, variable):
             module = ast.parse(path.read_text(encoding="utf-8"))
@@ -405,7 +410,10 @@ class EventRegistryTests(unittest.TestCase):
         for node in ast.walk(deploy_source):
             if not isinstance(node, ast.Call):
                 continue
-            if not isinstance(node.func, ast.Name) or node.func.id != "ConsumerConfig":
+            if (
+                not isinstance(node.func, ast.Name)
+                or node.func.id != "ConsumerConfig"
+            ):
                 continue
             values = {keyword.arg: keyword.value for keyword in node.keywords}
             durable = values.get("durable_name")
