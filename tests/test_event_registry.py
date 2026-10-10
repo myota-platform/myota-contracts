@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from generate_deploy_event_registry import runtime_catalog
+from generate_deploy_event_registry import runtime_catalog  # noqa: E402
 
 OWNER_REPOSITORIES = {
     "identity-service": "myota-identity-service",
@@ -21,7 +21,6 @@ OWNER_REPOSITORIES = {
 
 
 class EventRegistryTests(unittest.TestCase):
-
     def test_deploy_routing_catalog_is_generated_from_contract_registry(self):
         registry = json.loads(
             (ROOT / "contracts/event-registry.json").read_text(
@@ -48,9 +47,9 @@ class EventRegistryTests(unittest.TestCase):
         )
         for repo in ("myota-deploy", "myota-platform"):
             checked_in = json.loads(
-                (ROOT.parent / repo / "services/event_registry.json").read_text(
-                    encoding="utf-8"
-                )
+                (
+                    ROOT.parent / repo / "services/event_registry.json"
+                ).read_text(encoding="utf-8")
             )
             self.assertEqual(checked_in, catalog)
         for event in registry["events"]:
