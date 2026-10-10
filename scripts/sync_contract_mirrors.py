@@ -4,13 +4,17 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 from pathlib import Path
+
+from generate_deploy_event_registry import runtime_catalog
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--platform-root", type=Path, required=True)
+    parser.add_argument("--deploy-root", type=Path)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     canonical = root / "contracts" / "openapi.yaml"
@@ -38,6 +42,17 @@ def main() -> int:
             mirror.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, mirror)
         print(f"synced {mirror}")
+    catalog = runtime_catalog(
+        json.loads((source_contracts / "event-registry.json").read_text(encoding="utf-8"))
+    )
+    catalog_content = json.dumps(catalog, indent=2) + "\n"
+    destinations = [args.platform_root / "services" / "event_registry.json"]
+    if args.deploy_root:
+        destinations.append(args.deploy_root / "services" / "event_registry.json")
+    for destination in destinations:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text(catalog_content, encoding="utf-8")
+        print(f"generated {destination}")
     return 0
 
 

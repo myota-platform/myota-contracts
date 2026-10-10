@@ -38,8 +38,16 @@ abort operations under `/v1/geodata/import-uploads`. See the
 for retry, object-storage, and JetStream execution semantics.
 
 Phase 0 is frozen. The canonical file is `contracts/openapi.yaml`; the root
-file and the platform copy are generated mirrors. Synchronize them with
-`python3 scripts/sync_contract_mirrors.py --platform-root ../myota-platform`.
+file and the platform copy are generated mirrors. Synchronize them with:
+
+```sh
+python3 scripts/sync_contract_mirrors.py \
+  --platform-root ../myota-platform \
+  --deploy-root ../myota-deploy
+```
+
+This also generates the compact event-routing catalog consumed by the
+deployment relay and its synchronized platform copy.
 Run the route and contract checks with
 `python3 scripts/check_contract_phase0.py --canonical contracts/openapi.yaml --mirror openapi.yaml --mirror ../myota-platform/contracts/openapi.yaml --service-root ../myota-deploy/services --service-root ../myota-geodata-service --semantic-baseline contracts/semantic-duplicates.json --inventory-out contracts/route-inventory.json`.
 

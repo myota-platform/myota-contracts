@@ -2,11 +2,15 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from generate_deploy_event_registry import runtime_catalog
+
 OWNER_REPOSITORIES = {
     "identity-service": "myota-identity-service",
     "programme-service": "myota-programme-service",
@@ -17,6 +21,42 @@ OWNER_REPOSITORIES = {
 
 
 class EventRegistryTests(unittest.TestCase):
+
+    def test_deploy_routing_catalog_is_generated_from_contract_registry(self):
+        registry = json.loads(
+            (ROOT / "contracts/event-registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        catalog = runtime_catalog(registry)
+        expected_routes = {
+            "geodata.import.queued.v1": "myota.geodata.import.preprocess.v1",
+            "geodata.import.recovered.v1": "myota.geodata.import.preprocess.v1",
+            "geodata.import.processing.queued.v1": "myota.geodata.import.process.v1",
+            "geodata.import.processing.recovered.v1": "myota.geodata.import.process.v1",
+            "geodata.entity-deletion-job.queued.v1": "myota.geodata.entity.delete.v1",
+            "geodata.entity.location-enrichment-requested.v1": (
+                "myota.geodata.entity.location-enrichment.v1"
+            ),
+        }
+        self.assertEqual(
+            {
+                event_type: route["subject"]
+                for event_type, route in catalog["legacyWorkRoutes"].items()
+            },
+            expected_routes,
+        )
+        for repo in ("myota-deploy", "myota-platform"):
+            checked_in = json.loads(
+                (ROOT.parent / repo / "services/event_registry.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(checked_in, catalog)
+        for event in registry["events"]:
+            self.assertIn(event["owner"], registry["producerNamesByOwner"])
+            self.assertTrue(registry["producerNamesByOwner"][event["owner"]])
+
     def test_registry_entries_have_unique_subjects_and_checked_in_schemas(
         self,
     ):

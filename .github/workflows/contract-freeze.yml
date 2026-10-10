@@ -89,6 +89,26 @@ jobs:
           python3 scripts/generate_event_registry.py
           git diff --exit-code -- contracts/schemas
 
+      - name: Regenerate deploy and platform event-routing catalogs
+        working-directory: myota-contracts
+        run: |
+          python3 scripts/generate_deploy_event_registry.py \
+            --deploy-root ../myota-deploy \
+            --platform-root ../myota-platform
+          git -C ../myota-deploy diff --exit-code -- services/event_registry.json
+          git -C ../myota-platform diff --exit-code -- services/event_registry.json
+          cmp ../myota-deploy/services/outbox_worker.py ../myota-platform/services/outbox_worker.py
+          cmp ../myota-deploy/services/outbox_routing.py ../myota-platform/services/outbox_routing.py
+          cmp ../myota-deploy/services/outbox_admin.py ../myota-platform/services/outbox_admin.py
+          cmp ../myota-geodata-service/import_retention.py ../myota-deploy/services/import_retention.py
+          cmp ../myota-geodata-service/import_retention.py ../myota-platform/services/import_retention.py
+          cmp ../myota-deploy/deploy/helm/myota/templates/deployment.yaml ../myota-platform/deploy/helm/myota/templates/deployment.yaml
+          cmp ../myota-deploy/db/migrations/core/004_outbox_dead_letter_redrive.sql ../myota-platform/db/migrations/core/004_outbox_dead_letter_redrive.sql
+          cmp ../myota-deploy/db/migrations/activity/005_outbox_dead_letter_redrive.sql ../myota-platform/db/migrations/activity/005_outbox_dead_letter_redrive.sql
+          cmp ../myota-deploy/db/migrations/geo/020_outbox_dead_letter_redrive.sql ../myota-platform/db/migrations/geo/020_outbox_dead_letter_redrive.sql
+          cmp ../myota-activity-service/migrations/005_outbox_dead_letter_redrive.sql ../myota-deploy/db/migrations/activity/005_outbox_dead_letter_redrive.sql
+          cmp ../myota-geodata-service/migrations/020_outbox_dead_letter_redrive.sql ../myota-deploy/db/migrations/geo/020_outbox_dead_letter_redrive.sql
+
       - name: Validate YAML syntax
         working-directory: myota-contracts
         run: ruby -e 'require "yaml"; YAML.load_file("contracts/openapi.yaml"); YAML.load_file("contracts/semantic-duplicates.json")'
