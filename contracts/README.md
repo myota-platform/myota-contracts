@@ -12,11 +12,12 @@ files are generated mirrors. Do not edit them directly; run
 The event registry and JSON Schemas in `event-registry.json` and `schemas/`
 are authoritative here. The mirror sync copies them to `myota-platform` along
 with `events.md`. Each fact records its producer source files relative to the
-owning repository. The 19 Identity and 12 Programme fact payloads have
-source-derived schemas from `myota-identity-service/identity.py` and
-`myota-programme-service/programmes.py`; these schemas allow additive fields
-and record data classification. They still require joint owner review before
-they can gate a producer. Other payloads marked
+owning repository. The 19 Identity, 12 Programme, and 10 Activity fact payloads have source-derived
+schemas from their authoritative producer call sites; schemas allow additive
+fields and record data classification. Dynamic rule/configuration and nested
+award asset shapes remain unconstrained when producer inputs are extensible.
+These contracts still require joint owner/privacy review before they can gate a
+producer. Geodata and Operations payloads marked
 `pending-source-payload-review` remain open. Run
 `python3 scripts/audit_workspace_event_sources.py --workspace-root ..` from a
 full workspace to verify source references and ensure Python event-like source
