@@ -95,6 +95,9 @@ class EventRegistryTests(unittest.TestCase):
             self.assertEqual(
                 event["subject"], f"myota.events.{event['eventType']}"
             )
+            self.assertIn("consumerGroups", event)
+            self.assertIn("disposition", event)
+            self.assertTrue(event["disposition"].strip())
             sources = event["producerSources"]
             self.assertTrue(sources)
             self.assertEqual(sources, sorted(set(sources)))
@@ -257,6 +260,7 @@ class EventRegistryTests(unittest.TestCase):
             self.assertTrue(re.fullmatch(r"[a-z0-9-]+-v1", work["durable"]))
             self.assertEqual(work["schema"], "schemas/work-command.schema.json")
             self.assertTrue((ROOT / "contracts" / work["schema"]).is_file())
+            self.assertIn("payloadEvidence", work)
 
     def test_registered_work_durables_match_deploy_owned_topology(self):
         """Keep the contracts registry and provisioned command filters aligned."""
