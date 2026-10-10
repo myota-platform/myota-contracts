@@ -382,6 +382,16 @@ class EventRegistryTests(unittest.TestCase):
             self.assertEqual(
                 routes[work["workType"]]["durable"], work["durable"]
             )
+            if work.get("legacySubject"):
+                for event_type in work["sourceEventTypes"]:
+                    route = runtime_catalog(registry)["legacyWorkRoutes"][
+                        event_type
+                    ]
+                    self.assertEqual(route["workIdField"], work["workIdField"])
+                    self.assertEqual(
+                        route["payloadFields"],
+                        work["payloadSchema"]["required"],
+                    )
 
     def test_activity_notification_filters_match_registry_and_provisioner(
         self,

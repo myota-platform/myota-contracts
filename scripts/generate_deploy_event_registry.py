@@ -40,6 +40,8 @@ def runtime_catalog(registry: dict) -> dict:
                 "subject": subject,
                 "workType": work["workType"],
                 "producers": registry["producerNamesByOwner"][work["owner"]],
+                "workIdField": work["workIdField"],
+                "payloadFields": work["payloadSchema"]["required"],
             }
     return {
         "registryVersion": registry["registryVersion"],

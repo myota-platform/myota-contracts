@@ -4661,6 +4661,7 @@
     },
     {
       "workType": "geodata.import-preprocess.v1",
+      "workIdField": "importRunId",
       "owner": "geodata-service",
       "class": "work-command",
       "subject": "myota.work.geodata.import-preprocess.v1",
@@ -4697,6 +4698,7 @@
     },
     {
       "workType": "geodata.import-promotion.v1",
+      "workIdField": "queueId",
       "owner": "geodata-service",
       "class": "work-command",
       "subject": "myota.work.geodata.import-promotion.v1",
@@ -4733,6 +4735,7 @@
     },
     {
       "workType": "geodata.entity-delete.v1",
+      "workIdField": "jobId",
       "owner": "geodata-service",
       "class": "work-command",
       "subject": "myota.work.geodata.entity-delete.v1",
@@ -4768,6 +4771,7 @@
     },
     {
       "workType": "geodata.location-enrichment.v1",
+      "workIdField": "requestId",
       "owner": "geodata-service",
       "class": "work-command",
       "subject": "myota.work.geodata.location-enrichment.v1",
