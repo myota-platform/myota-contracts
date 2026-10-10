@@ -232,13 +232,47 @@ class EventRegistryTests(unittest.TestCase):
                 required_properties.issubset(payload["properties"])
             )
         for work in registry["work"]:
-            self.assertIn(
-                work["subject"].split(".")[2], {"activity", "geodata"}
+            owner_namespace = (
+                "activity"
+                if work["owner"] == "activity-service"
+                else "geodata"
+            )
+            stream = (
+                registry["activityWorkStream"]
+                if owner_namespace == "activity"
+                else registry["geodataWorkStream"]
+            )
+            self.assertEqual(work["stream"], stream)
+            self.assertEqual(
+                work["subject"], f"myota.work.{work['workType']}"
+            )
+            self.assertTrue(
+                work["subject"].startswith(
+                    f"myota.work.{owner_namespace}."
+                )
             )
             self.assertRegex(
                 work["workType"], r"^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)+\.v1$"
             )
             self.assertTrue(re.fullmatch(r"[a-z0-9-]+-v1", work["durable"]))
+            self.assertEqual(work["schema"], "schemas/work-command.schema.json")
+            self.assertTrue((ROOT / "contracts" / work["schema"]).is_file())
+
+    def test_registered_work_durables_match_deploy_owned_topology(self):
+        """Keep the contracts registry and provisioned command filters aligned."""
+        deploy_root = ROOT.parent / "myota-deploy"
+        topology_source = deploy_root / "services/jetstream_topology.py"
+        if not topology_source.is_file():
+            self.skipTest("deploy repository is not checked out beside contracts")
+        source = topology_source.read_text(encoding="utf-8")
+        registered = json.loads(
+            (ROOT / "contracts/event-registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        for work in registered["work"]:
+            self.assertIn(f'"{work["durable"]}"', source)
+            self.assertIn(f'"{work["subject"]}"', source)
 
     def test_outer_event_envelope_rejects_relay_mutable_fields(self):
         schema = json.loads(
