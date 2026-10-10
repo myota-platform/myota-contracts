@@ -15,7 +15,7 @@ with `events.md`. Each fact records its producer source files relative to the
 owning repository. Payload shapes marked `pending-source-payload-review` are not
 yet a complete producer compatibility gate. Run
 `python3 scripts/audit_workspace_event_sources.py --workspace-root ..` from a
-full workspace to verify source references and ensure event-like source
+full workspace to verify source references and ensure Python event-like source
 literals have a fact or legacy-work disposition.
 
 Geodata payloads use the shared Master data category catalogue: `entityTypes` is
