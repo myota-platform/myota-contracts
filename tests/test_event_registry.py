@@ -48,6 +48,24 @@ class EventRegistryTests(unittest.TestCase):
             if event["owner"] == "activity-service"
         ]
         self.assertEqual(len(activity_events), 10)
+        activity_by_type = {
+            event["eventType"]: event for event in activity_events
+        }
+        self.assertEqual(
+            set(activity_by_type),
+            {
+                "activity.activation.closed.v1",
+                "activity.activation.created.v1",
+                "activity.adif.queued.v1",
+                "activity.entity.cascade-deleted.v1",
+                "activity.qso.recorded.v1",
+                "awards.definition.published.v1",
+                "awards.definition.saved.v1",
+                "awards.issued.v1",
+                "awards.rendered.v1",
+                "awards.request.created.v1",
+            },
+        )
         self.assertEqual(len(registry["work"]), 10)
         self.assertEqual(
             {
@@ -135,6 +153,24 @@ class EventRegistryTests(unittest.TestCase):
                 self.assertEqual(
                     event["payloadEvidence"], "pending-source-payload-review"
                 )
+        for event_type, required_properties in {
+            "activity.adif.queued.v1": {"objectKey", "bucket", "sha256"},
+            "activity.qso.recorded.v1": {
+                "workedCallsign",
+                "deduplicationKey",
+            },
+            "awards.issued.v1": {"personName", "managerName", "artifact"},
+            "awards.request.created.v1": {"personName", "facts"},
+        }.items():
+            event = activity_by_type[event_type]
+            payload = json.loads(
+                (ROOT / "contracts" / event["schema"]).read_text(
+                    encoding="utf-8"
+                )
+            )["allOf"][1]["properties"]["payload"]
+            self.assertTrue(
+                required_properties.issubset(payload["properties"])
+            )
         for work in registry["work"]:
             self.assertIn(
                 work["subject"].split(".")[2], {"activity", "geodata"}
