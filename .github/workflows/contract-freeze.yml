@@ -79,6 +79,10 @@ jobs:
           python3 scripts/audit_workspace_event_sources.py
           --workspace-root ..
 
+      - name: Check event registry and payload schemas
+        working-directory: myota-contracts
+        run: python3 -m unittest discover -s tests -v
+
       - name: Validate YAML syntax
         working-directory: myota-contracts
         run: ruby -e 'require "yaml"; YAML.load_file("contracts/openapi.yaml"); YAML.load_file("contracts/semantic-duplicates.json")'

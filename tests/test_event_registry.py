@@ -30,6 +30,12 @@ class EventRegistryTests(unittest.TestCase):
         ]
         self.assertEqual(len(subjects), len(set(subjects)))
         self.assertEqual(len(registry["events"]), 68)
+        identity_events = [
+            event
+            for event in registry["events"]
+            if event["owner"] == "identity-service"
+        ]
+        self.assertEqual(len(identity_events), 19)
         self.assertEqual(len(registry["work"]), 10)
         self.assertEqual(
             {
@@ -65,9 +71,49 @@ class EventRegistryTests(unittest.TestCase):
                 schema["allOf"][1]["properties"]["eventType"]["const"],
                 event["eventType"],
             )
-            self.assertEqual(
-                event["payloadEvidence"], "pending-source-payload-review"
-            )
+            if event["owner"] == "identity-service":
+                self.assertEqual(
+                    event["payloadEvidence"],
+                    "source-derived-identity-callsite",
+                )
+                self.assertEqual(
+                    schema["x-payload-evidence"], event["payloadEvidence"]
+                )
+                self.assertEqual(
+                    schema["x-data-classification"],
+                    event["dataClassification"],
+                )
+                self.assertIn(
+                    event["dataClassification"],
+                    {
+                        "personal",
+                        "personal-and-security",
+                        "internal-configuration",
+                        "internal-authorization",
+                        "security-sensitive",
+                    },
+                )
+                payload = schema["allOf"][1]["properties"]["payload"]
+                self.assertEqual(payload["type"], "object")
+                self.assertTrue(payload["additionalProperties"])
+                self.assertTrue(payload["required"])
+                if event["eventType"] == "identity.service-token.issued.v1":
+                    self.assertEqual(
+                        set(payload["properties"]), {"service", "scopes"}
+                    )
+                    self.assertNotIn("accessToken", payload["properties"])
+                if event["eventType"] == "identity.login.failed.v1":
+                    self.assertEqual(
+                        event["dataClassification"],
+                        "personal-and-security",
+                    )
+                    self.assertEqual(
+                        set(payload["properties"]), {"email", "remoteAddr"}
+                    )
+            else:
+                self.assertEqual(
+                    event["payloadEvidence"], "pending-source-payload-review"
+                )
         for work in registry["work"]:
             self.assertIn(
                 work["subject"].split(".")[2], {"activity", "geodata"}

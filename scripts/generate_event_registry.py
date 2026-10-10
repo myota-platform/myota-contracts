@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Generate per-event schema wrappers from the checked-in event registry.
-
-The registry is authoritative in this repository. Per-event payloads remain
-intentionally permissive until their owning services close the recorded
-payload-evidence gates; this generator does not invent payload properties.
-"""
+"""Generate per-event schema wrappers from the checked-in event registry."""
 
 from __future__ import annotations
 
@@ -17,9 +12,13 @@ REGISTRY = ROOT / "contracts/event-registry.json"
 SCHEMA_DIR = ROOT / "contracts/schemas/events"
 
 
-def event_schema(event_type: str) -> dict:
+def event_schema(event: dict) -> dict:
+    event_type = event["eventType"]
     safe = event_type.replace(".", "-")
-    return {
+    properties = {"eventType": {"const": event_type}}
+    if "payloadSchema" in event:
+        properties["payload"] = event["payloadSchema"]
+    schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": f"https://github.com/myota-platform/myota-contracts/contracts/schemas/events/{safe}.schema.json",
         "title": f"{event_type} envelope v1",
@@ -27,10 +26,14 @@ def event_schema(event_type: str) -> dict:
             {"$ref": "../event-envelope.schema.json"},
             {
                 "type": "object",
-                "properties": {"eventType": {"const": event_type}},
+                "properties": properties,
             },
         ],
     }
+    if "payloadSchema" in event:
+        schema["x-payload-evidence"] = event["payloadEvidence"]
+        schema["x-data-classification"] = event["dataClassification"]
+    return schema
 
 
 def main() -> None:
@@ -42,7 +45,7 @@ def main() -> None:
         path = ROOT / "contracts" / event["schema"]
         expected.add(path)
         path.write_text(
-            json.dumps(event_schema(event["eventType"]), indent=2) + "\n",
+            json.dumps(event_schema(event), indent=2) + "\n",
             encoding="utf-8",
         )
     for stale in SCHEMA_DIR.glob("*.schema.json"):
