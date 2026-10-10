@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import ast
 import re
 import sys
 import unittest
@@ -360,6 +361,63 @@ class EventRegistryTests(unittest.TestCase):
         for work in registered["work"]:
             self.assertIn(f'"{work["durable"]}"', source)
             self.assertIn(f'"{work["subject"]}"', source)
+
+    def test_activity_notification_filters_match_registry_and_provisioner(self):
+        registry = json.loads(
+            (ROOT / "contracts/event-registry.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected = sorted(
+            event["subject"]
+            for event in registry["events"]
+            if "activity-notifications-v1" in event["consumerGroups"]
+        )
+        activity_root = ROOT.parent / "myota-activity-service"
+        deploy_root = ROOT.parent / "myota-deploy"
+        if not (activity_root / "event_consumer.py").is_file() or not (
+            deploy_root / "services/outbox_worker.py"
+        ).is_file():
+            self.skipTest("Activity and deploy repositories are not checked out")
+
+        def assigned_filters(path, variable):
+            module = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(module):
+                if isinstance(node, ast.Assign) and any(
+                    isinstance(target, ast.Name) and target.id == variable
+                    for target in node.targets
+                ):
+                    return sorted(ast.literal_eval(node.value))
+            self.fail(f"{variable} not found in {path}")
+
+        activity_filters = assigned_filters(
+            activity_root / "event_consumer.py",
+            "ACTIVITY_NOTIFICATION_SUBJECTS",
+        )
+        self.assertEqual(activity_filters, expected)
+
+        deploy_source = ast.parse(
+            (deploy_root / "services/outbox_worker.py").read_text(
+                encoding="utf-8"
+            )
+        )
+        deploy_filters = None
+        for node in ast.walk(deploy_source):
+            if not isinstance(node, ast.Call):
+                continue
+            if not isinstance(node.func, ast.Name) or node.func.id != "ConsumerConfig":
+                continue
+            values = {keyword.arg: keyword.value for keyword in node.keywords}
+            durable = values.get("durable_name")
+            filters = values.get("filter_subjects")
+            if (
+                isinstance(durable, ast.Constant)
+                and durable.value == "activity-notifications-v1"
+                and filters is not None
+            ):
+                deploy_filters = sorted(ast.literal_eval(filters))
+                break
+        self.assertEqual(deploy_filters, expected)
 
     def test_outer_event_envelope_rejects_relay_mutable_fields(self):
         schema = json.loads(
