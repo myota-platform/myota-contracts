@@ -48,6 +48,15 @@ class EventRegistryTests(unittest.TestCase):
             if event["owner"] == "activity-service"
         ]
         self.assertEqual(len(activity_events), 10)
+        geodata_events = [
+            event
+            for event in registry["events"]
+            if event["owner"] == "geodata-service"
+        ]
+        self.assertEqual(len(geodata_events), 27)
+        geodata_by_type = {
+            event["eventType"]: event for event in geodata_events
+        }
         activity_by_type = {
             event["eventType"]: event for event in activity_events
         }
@@ -105,6 +114,7 @@ class EventRegistryTests(unittest.TestCase):
                 "identity-service",
                 "programme-service",
                 "activity-service",
+                "geodata-service",
             }:
                 owner_slug = event["owner"].replace("-service", "")
                 self.assertEqual(
@@ -130,6 +140,11 @@ class EventRegistryTests(unittest.TestCase):
                         "personal-and-operational-data",
                         "internal-configuration-and-personal",
                         "personal-and-certificate-metadata",
+                        "geospatial-and-review-metadata",
+                        "geospatial-and-operational-data",
+                        "geospatial-and-source-data",
+                        "internal-operational-metadata",
+                        "internal-configuration-and-source-metadata",
                     },
                 )
                 payload = schema["allOf"][1]["properties"]["payload"]
@@ -155,6 +170,7 @@ class EventRegistryTests(unittest.TestCase):
                 )
         for event_type, required_properties in {
             "activity.adif.queued.v1": {"objectKey", "bucket", "sha256"},
+            "activity.activation.created.v1": {"programmeSlug", "operatorId"},
             "activity.qso.recorded.v1": {
                 "workedCallsign",
                 "deduplicationKey",
@@ -163,6 +179,50 @@ class EventRegistryTests(unittest.TestCase):
             "awards.request.created.v1": {"personName", "facts"},
         }.items():
             event = activity_by_type[event_type]
+            payload = json.loads(
+                (ROOT / "contracts" / event["schema"]).read_text(
+                    encoding="utf-8"
+                )
+            )["allOf"][1]["properties"]["payload"]
+            self.assertTrue(
+                required_properties.issubset(payload["properties"])
+            )
+        for event_type, required_properties in {
+            "geodata.entity.location-enriched.v1": {
+                "entityId",
+                "requestId",
+                "geometryHash",
+                "status",
+                "reason",
+            },
+            "geodata.import.preprocessed.v1": {
+                "importRunId",
+                "adapter",
+                "preprocessed",
+                "errors",
+                "manifest",
+            },
+            "geodata.entity.entity-type-changed.v1": {
+                "entityId",
+                "editorId",
+                "previousEntityTypes",
+                "entityTypes",
+            },
+            "geodata.entity.status-changed.v1": {
+                "entityId",
+                "status",
+                "previousStatus",
+                "reviewerId",
+            },
+            "geodata.entity-deletion-job.created.v1": {
+                "id",
+                "entityId",
+                "status",
+                "requestedBy",
+                "impact",
+            },
+        }.items():
+            event = geodata_by_type[event_type]
             payload = json.loads(
                 (ROOT / "contracts" / event["schema"]).read_text(
                     encoding="utf-8"
