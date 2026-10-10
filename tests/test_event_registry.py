@@ -42,6 +42,12 @@ class EventRegistryTests(unittest.TestCase):
         ]
         self.assertEqual(len(identity_events), 19)
         self.assertEqual(len(programme_events), 12)
+        activity_events = [
+            event
+            for event in registry["events"]
+            if event["owner"] == "activity-service"
+        ]
+        self.assertEqual(len(activity_events), 10)
         self.assertEqual(len(registry["work"]), 10)
         self.assertEqual(
             {
@@ -77,7 +83,11 @@ class EventRegistryTests(unittest.TestCase):
                 schema["allOf"][1]["properties"]["eventType"]["const"],
                 event["eventType"],
             )
-            if event["owner"] in {"identity-service", "programme-service"}:
+            if event["owner"] in {
+                "identity-service",
+                "programme-service",
+                "activity-service",
+            }:
                 owner_slug = event["owner"].replace("-service", "")
                 self.assertEqual(
                     event["payloadEvidence"],
@@ -99,6 +109,9 @@ class EventRegistryTests(unittest.TestCase):
                         "internal-configuration-and-user-metadata",
                         "internal-authorization",
                         "security-sensitive",
+                        "personal-and-operational-data",
+                        "internal-configuration-and-personal",
+                        "personal-and-certificate-metadata",
                     },
                 )
                 payload = schema["allOf"][1]["properties"]["payload"]
