@@ -115,18 +115,6 @@ class MyOTAClient:
             expected_version=expected_version,
         )
 
-    def get_object_storage_status(self) -> dict[str, Any]:
-        return self.request("GET", "/v1/operations/object-storage")
-
-    def list_object_storage_snapshots(
-        self, page: int = 1, page_size: int = 20
-    ) -> dict[str, Any]:
-        return self.request(
-            "GET",
-            "/v1/operations/object-storage/snapshots",
-            query={"page": page, "pageSize": page_size},
-        )
-
     def get_observability_session(self) -> dict[str, Any]:
         return self.request("GET", "/v1/operations/observability-session")
 

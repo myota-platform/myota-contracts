@@ -299,14 +299,6 @@
       ]
     },
     {
-      "owner": "myota-operations-service",
-      "path": "storage_observability.py",
-      "mirrors": [
-        "myota-deploy/services/storage_observability.py",
-        "myota-platform/services/storage_observability.py"
-      ]
-    },
-    {
       "owner": "myota-platform",
       "path": "runtime/myota_logging.py",
       "mirrors": [
@@ -362,6 +354,33 @@
         "myota-platform/db/migrations/core/003_storage_snapshots.sql"
       ],
       "artifactType": "migration"
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "migrations/003_retire_storage_snapshots.sql",
+      "mirrors": [
+        "myota-deploy/db/migrations/core/006_retire_storage_snapshots.sql",
+        "myota-platform/db/migrations/core/006_retire_storage_snapshots.sql"
+      ],
+      "artifactType": "migration"
+    },
+    {
+      "owner": "myota-deploy",
+      "path": "deploy/helm/myota/observability/grafana/dashboards/myota-object-storage.json",
+      "mirrors": [
+        "myota-deploy/observability/grafana/dashboards/myota-object-storage.json",
+        "myota-platform/observability/grafana/dashboards/myota-object-storage.json",
+        "myota-platform/deploy/helm/myota/observability/grafana/dashboards/myota-object-storage.json"
+      ],
+      "artifactType": "observability"
+    },
+    {
+      "owner": "myota-deploy",
+      "path": "deploy/helm/myota/observability/rules.yml",
+      "mirrors": [
+        "myota-platform/deploy/helm/myota/observability/rules.yml"
+      ],
+      "artifactType": "observability"
     }
   ],
   "treeEntries": [

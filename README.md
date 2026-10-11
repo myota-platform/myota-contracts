@@ -15,10 +15,10 @@ dependency-light generated client used by the local integration slice.
   transient PDF previews. Draft schemas retain manager/signature/effective-date
   fields and custom text. Both clients expose these preferred methods. See the
   [designer resource guide](https://github.com/myota-platform/myota-docs/blob/main/docs/programme-and-award-design.md).
-- SeaweedFS status and paged sampled-history resources at
-  `/v1/operations/object-storage` and `/v1/operations/object-storage/snapshots`,
-  plus the live-identity-checked `/v1/operations/observability-session` resource
-  for per-user Grafana Editor/Viewer role resolution. Clients cover all three.
+- The Operations SeaweedFS sampled-status routes are retired. SeaweedFS
+  metrics are provided through the OpenTelemetry-backed Grafana dashboard;
+  `/v1/operations/observability-session` remains for per-user Grafana role
+  resolution.
 - Permission-checked JetStream status and paged snapshot-history resources at
   `/v1/operations/jetstream` and `/v1/operations/jetstream/snapshots`, with
   nullable unknown measurements rather than invented zero values.
