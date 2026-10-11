@@ -349,7 +349,8 @@
       "owner": "myota-operations-service",
       "path": "migrations/001_operations.sql",
       "mirrors": [
-        "myota-deploy/db/migrations/core/002_operations.sql"
+        "myota-deploy/db/migrations/core/002_operations.sql",
+        "myota-platform/db/migrations/core/002_operations.sql"
       ],
       "artifactType": "migration"
     },
@@ -357,7 +358,8 @@
       "owner": "myota-operations-service",
       "path": "migrations/002_storage_snapshots.sql",
       "mirrors": [
-        "myota-deploy/db/migrations/core/003_storage_snapshots.sql"
+        "myota-deploy/db/migrations/core/003_storage_snapshots.sql",
+        "myota-platform/db/migrations/core/003_storage_snapshots.sql"
       ],
       "artifactType": "migration"
     }
@@ -375,7 +377,8 @@
       "owner": "myota-activity-service",
       "path": "migrations",
       "mirrors": [
-        "myota-deploy/db/migrations/activity"
+        "myota-deploy/db/migrations/activity",
+        "myota-platform/db/migrations/activity"
       ],
       "artifactType": "migrations"
     },
@@ -383,7 +386,8 @@
       "owner": "myota-geodata-service",
       "path": "migrations",
       "mirrors": [
-        "myota-deploy/db/migrations/geo"
+        "myota-deploy/db/migrations/geo",
+        "myota-platform/db/migrations/geo"
       ],
       "artifactType": "migrations"
     }
