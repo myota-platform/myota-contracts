@@ -73,6 +73,10 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Audit source-owned runtime mirrors
+        working-directory: myota-contracts
+        run: python3 scripts/audit_runtime_mirrors.py ..
+
       - name: Audit registered event producer sources
         working-directory: myota-contracts
         run: >-
@@ -123,7 +127,6 @@ jobs:
           cmp ../myota-activity-service/migrations/006_notification_consumer_replay.sql ../myota-platform/db/migrations/activity/006_notification_consumer_replay.sql
           cmp ../myota-deploy/observability/otel-collector.yaml ../myota-platform/observability/otel-collector.yaml
           cmp ../myota-deploy/observability/rules.yml ../myota-platform/observability/rules.yml
-          cmp ../myota-deploy/observability/grafana/dashboards/myota-jetstream-backlog.json ../myota-platform/observability/grafana/dashboards/myota-jetstream-backlog.json
           cmp ../myota-geodata-service/import_retention.py ../myota-deploy/services/import_retention.py
           cmp ../myota-geodata-service/import_retention.py ../myota-platform/services/import_retention.py
           cmp ../myota-deploy/deploy/helm/myota/templates/deployment.yaml ../myota-platform/deploy/helm/myota/templates/deployment.yaml

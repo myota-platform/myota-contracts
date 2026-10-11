@@ -1,0 +1,319 @@
+{
+  "version": 1,
+  "description": "Source-owned runtime modules synchronized into Deploy image and Platform integration mirrors. Shared-name integration modules (common.py, metrics.py, otel.py, storage.py) are intentionally excluded because they combine service adapters and require their own explicit ownership review.",
+  "entries": [
+    {
+      "owner": "myota-identity-service",
+      "path": "identity.py",
+      "mirrors": [
+        "myota-deploy/services/identity.py",
+        "myota-platform/services/identity.py"
+      ]
+    },
+    {
+      "owner": "myota-identity-service",
+      "path": "identity_maintenance.py",
+      "mirrors": [
+        "myota-deploy/services/identity_maintenance.py",
+        "myota-platform/services/identity_maintenance.py"
+      ]
+    },
+    {
+      "owner": "myota-identity-service",
+      "path": "run_identity.py",
+      "mirrors": [
+        "myota-deploy/services/run_identity.py",
+        "myota-platform/services/run_identity.py"
+      ]
+    },
+    {
+      "owner": "myota-programme-service",
+      "path": "programmes.py",
+      "mirrors": [
+        "myota-deploy/services/programmes.py",
+        "myota-platform/services/programmes.py"
+      ]
+    },
+    {
+      "owner": "myota-programme-service",
+      "path": "run_programmes.py",
+      "mirrors": [
+        "myota-deploy/services/run_programmes.py",
+        "myota-platform/services/run_programmes.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "activity.py",
+      "mirrors": [
+        "myota-deploy/services/activity.py",
+        "myota-platform/services/activity.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "activity_domain.py",
+      "mirrors": [
+        "myota-deploy/services/activity_domain.py",
+        "myota-platform/services/activity_domain.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "activity_notification_consumer.py",
+      "mirrors": [
+        "myota-deploy/services/activity_notification_consumer.py",
+        "myota-platform/services/activity_notification_consumer.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "activity_notification_topology.py",
+      "mirrors": [
+        "myota-deploy/services/activity_notification_topology.py",
+        "myota-platform/services/activity_notification_topology.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "activity_repository.py",
+      "mirrors": [
+        "myota-deploy/services/activity_repository.py",
+        "myota-platform/services/activity_repository.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "activity_worker.py",
+      "mirrors": [
+        "myota-deploy/services/activity_worker.py",
+        "myota-platform/services/activity_worker.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "adif_retention_worker.py",
+      "mirrors": [
+        "myota-deploy/services/adif_retention_worker.py",
+        "myota-platform/services/adif_retention_worker.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "awards.py",
+      "mirrors": [
+        "myota-deploy/services/awards.py",
+        "myota-platform/services/awards.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "certificate_design.py",
+      "mirrors": [
+        "myota-deploy/services/certificate_design.py",
+        "myota-platform/services/certificate_design.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "event_consumer.py",
+      "mirrors": [
+        "myota-deploy/services/event_consumer.py",
+        "myota-platform/services/event_consumer.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "redrive_activity_job.py",
+      "mirrors": [
+        "myota-deploy/services/redrive_activity_job.py",
+        "myota-platform/services/redrive_activity_job.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "redrive_notification_dead_letter.py",
+      "mirrors": [
+        "myota-deploy/services/redrive_notification_dead_letter.py",
+        "myota-platform/services/redrive_notification_dead_letter.py"
+      ]
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "run_activity.py",
+      "mirrors": [
+        "myota-deploy/services/run_activity.py",
+        "myota-platform/services/run_activity.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata.py",
+      "mirrors": [
+        "myota-deploy/services/geodata.py",
+        "myota-platform/services/geodata.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata_import_worker.py",
+      "mirrors": [
+        "myota-deploy/services/geodata_import_worker.py",
+        "myota-platform/services/geodata_import_worker.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata_importer.py",
+      "mirrors": [
+        "myota-deploy/services/geodata_importer.py",
+        "myota-platform/services/geodata_importer.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata_operations.py",
+      "mirrors": [
+        "myota-deploy/services/geodata_operations.py",
+        "myota-platform/services/geodata_operations.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata_pipeline.py",
+      "mirrors": [
+        "myota-deploy/services/geodata_pipeline.py",
+        "myota-platform/services/geodata_pipeline.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata_retention_worker.py",
+      "mirrors": [
+        "myota-deploy/services/geodata_retention_worker.py",
+        "myota-platform/services/geodata_retention_worker.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata_store.py",
+      "mirrors": [
+        "myota-deploy/services/geodata_store.py",
+        "myota-platform/services/geodata_store.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "import_adapters.py",
+      "mirrors": [
+        "myota-deploy/services/import_adapters.py",
+        "myota-platform/services/import_adapters.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "import_formats.py",
+      "mirrors": [
+        "myota-deploy/services/import_formats.py",
+        "myota-platform/services/import_formats.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "import_retention.py",
+      "mirrors": [
+        "myota-deploy/services/import_retention.py",
+        "myota-platform/services/import_retention.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "location_catalog.py",
+      "mirrors": [
+        "myota-deploy/services/location_catalog.py",
+        "myota-platform/services/location_catalog.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "maidenhead.py",
+      "mirrors": [
+        "myota-deploy/services/maidenhead.py",
+        "myota-platform/services/maidenhead.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "relational_metrics.py",
+      "mirrors": [
+        "myota-deploy/services/relational_metrics.py",
+        "myota-platform/services/relational_metrics.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "relational_queries.py",
+      "mirrors": [
+        "myota-deploy/services/relational_queries.py",
+        "myota-platform/services/relational_queries.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "relational_state.py",
+      "mirrors": [
+        "myota-deploy/services/relational_state.py",
+        "myota-platform/services/relational_state.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "reverse_geocoder.py",
+      "mirrors": [
+        "myota-deploy/services/reverse_geocoder.py",
+        "myota-platform/services/reverse_geocoder.py"
+      ]
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "run_geodata.py",
+      "mirrors": [
+        "myota-deploy/services/run_geodata.py",
+        "myota-platform/services/run_geodata.py"
+      ]
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "operations.py",
+      "mirrors": [
+        "myota-deploy/services/operations.py",
+        "myota-platform/services/operations.py"
+      ]
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "postgres_observability.py",
+      "mirrors": [
+        "myota-deploy/services/postgres_observability.py",
+        "myota-platform/services/postgres_observability.py"
+      ]
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "storage_observability.py",
+      "mirrors": [
+        "myota-deploy/services/storage_observability.py",
+        "myota-platform/services/storage_observability.py"
+      ]
+    },
+    {
+      "owner": "myota-identity-service",
+      "path": "myota_logging.py",
+      "mirrors": [
+        "myota-deploy/services/myota_logging.py",
+        "myota-platform/services/myota_logging.py"
+      ],
+      "shared": true
+    }
+  ]
+}
