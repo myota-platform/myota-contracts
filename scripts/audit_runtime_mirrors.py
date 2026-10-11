@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
-"""Fail when source-owned runtime modules drift from Deploy or Platform mirrors."""
+"""Fail when source-owned runtime/artifact mirrors drift."""
 
 from __future__ import annotations
 
 import json
 import sys
 from pathlib import Path
+
+
+def tree_files(directory: Path) -> dict[str, Path]:
+    return {
+        path.relative_to(directory).as_posix(): path
+        for path in directory.rglob("*")
+        if path.is_file()
+    }
 
 
 def main() -> int:
@@ -21,6 +29,8 @@ def main() -> int:
     )
     data = json.loads(manifest.read_text(encoding="utf-8"))
     errors: list[str] = []
+    mirror_count = 0
+
     for entry in data["entries"]:
         source = root / entry["owner"] / entry["path"]
         if not source.is_file():
@@ -29,21 +39,59 @@ def main() -> int:
             )
             continue
         for mirror in entry["mirrors"]:
+            mirror_count += 1
             target = root / mirror
             if not target.is_file():
                 errors.append(
-                    f"missing mirror: {mirror} (from {entry['owner']}/{entry['path']})"
+                    f"missing mirror: {mirror} "
+                    f"(from {entry['owner']}/{entry['path']})"
                 )
             elif target.read_bytes() != source.read_bytes():
                 errors.append(
-                    f"drift: {mirror} differs from {entry['owner']}/{entry['path']}"
+                    f"drift: {mirror} differs from "
+                    f"{entry['owner']}/{entry['path']}"
                 )
+
+    tree_count = 0
+    for entry in data.get("treeEntries", []):
+        source = root / entry["owner"] / entry["path"]
+        if not source.is_dir():
+            errors.append(
+                f"missing owner tree: {entry['owner']}/{entry['path']}"
+            )
+            continue
+        source_files = tree_files(source)
+        for mirror in entry["mirrors"]:
+            tree_count += 1
+            target = root / mirror
+            if not target.is_dir():
+                errors.append(
+                    f"missing mirror tree: {mirror} "
+                    f"(from {entry['owner']}/{entry['path']})"
+                )
+                continue
+            target_files = tree_files(target)
+            missing = sorted(source_files.keys() - target_files.keys())
+            extra = sorted(target_files.keys() - source_files.keys())
+            if missing:
+                errors.append(
+                    f"missing files in {mirror}: {', '.join(missing)}"
+                )
+            if extra:
+                errors.append(f"extra files in {mirror}: {', '.join(extra)}")
+            for relative in sorted(source_files.keys() & target_files.keys()):
+                if (
+                    source_files[relative].read_bytes()
+                    != target_files[relative].read_bytes()
+                ):
+                    errors.append(f"drift: {mirror}/{relative}")
+
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
     print(
-        f"runtime mirror audit passed: {len(data['entries'])} owner paths, "
-        f"{sum(len(e['mirrors']) for e in data['entries'])} mirrors"
+        f"source mirror audit passed: {len(data['entries'])} owner files, "
+        f"{mirror_count} file mirrors, {tree_count} exact tree mirrors"
     )
     return 0
 

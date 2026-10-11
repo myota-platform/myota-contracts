@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Source-owned runtime modules synchronized into Deploy image and Platform integration mirrors. Shared-name integration modules (common.py, metrics.py, otel.py, storage.py) are intentionally excluded because they combine service adapters and require their own explicit ownership review.",
+  "description": "Owner-to-mirror map for selected runtime modules, contract artifacts, and migration trees consumed by Deploy. Service adapters remain service-owned.",
   "entries": [
     {
       "owner": "myota-identity-service",
@@ -327,6 +327,65 @@
         "myota-deploy/services/geodata_routes.py",
         "myota-platform/services/geodata_routes.py"
       ]
+    },
+    {
+      "owner": "myota-contracts",
+      "path": "contracts/openapi.yaml",
+      "mirrors": [
+        "myota-contracts/openapi.yaml",
+        "myota-platform/contracts/openapi.yaml"
+      ],
+      "artifactType": "openapi"
+    },
+    {
+      "owner": "myota-contracts",
+      "path": "contracts/event-registry.json",
+      "mirrors": [
+        "myota-platform/contracts/event-registry.json"
+      ],
+      "artifactType": "event-registry"
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "migrations/001_operations.sql",
+      "mirrors": [
+        "myota-deploy/db/migrations/core/002_operations.sql"
+      ],
+      "artifactType": "migration"
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "migrations/002_storage_snapshots.sql",
+      "mirrors": [
+        "myota-deploy/db/migrations/core/003_storage_snapshots.sql"
+      ],
+      "artifactType": "migration"
+    }
+  ],
+  "treeEntries": [
+    {
+      "owner": "myota-contracts",
+      "path": "contracts/schemas",
+      "mirrors": [
+        "myota-platform/contracts/schemas"
+      ],
+      "artifactType": "event-schemas"
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "migrations",
+      "mirrors": [
+        "myota-deploy/db/migrations/activity"
+      ],
+      "artifactType": "migrations"
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "migrations",
+      "mirrors": [
+        "myota-deploy/db/migrations/geo"
+      ],
+      "artifactType": "migrations"
     }
   ]
 }
