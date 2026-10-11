@@ -17,8 +17,9 @@ dependency-light generated client used by the local integration slice.
   [designer resource guide](https://github.com/myota-platform/myota-docs/blob/main/docs/programme-and-award-design.md).
 - The Operations Service and its HTTP routes are retired. The OTel Collector
   owns bounded PostgreSQL metrics; the Gateway checks live Identity roles for
-  Grafana access. NATS/JetStream is monitored by Surveyor dashboards. No
-  `/v1/operations/*` endpoint remains.
+  Grafana access. NATS/JetStream is monitored by Surveyor dashboards. The
+  current route inventory contains 128 contract operations and 166 service
+  registrations; no `/v1/operations/*` endpoint remains.
 - Entity responses expose `version`; preferred entity update methods in both
   clients accept an optional version and send `If-Match`. Stale updates return
   HTTP 409, allowing users to reload before overwriting concurrent work.
