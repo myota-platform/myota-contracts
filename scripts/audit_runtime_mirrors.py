@@ -9,16 +9,24 @@ from pathlib import Path
 
 
 def main() -> int:
-    root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path("..").resolve()
+    root = (
+        Path(sys.argv[1]).resolve()
+        if len(sys.argv) > 1
+        else Path("..").resolve()
+    )
     manifest = (
-        Path(__file__).resolve().parents[1] / "contracts" / "runtime-mirror-map.json"
+        Path(__file__).resolve().parents[1]
+        / "contracts"
+        / "runtime-mirror-map.json"
     )
     data = json.loads(manifest.read_text(encoding="utf-8"))
     errors: list[str] = []
     for entry in data["entries"]:
         source = root / entry["owner"] / entry["path"]
         if not source.is_file():
-            errors.append(f"missing owner source: {entry['owner']}/{entry['path']}")
+            errors.append(
+                f"missing owner source: {entry['owner']}/{entry['path']}"
+            )
             continue
         for mirror in entry["mirrors"]:
             target = root / mirror
