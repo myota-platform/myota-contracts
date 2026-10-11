@@ -27,6 +27,12 @@ def duplicate_key_errors(node, context = "$", errors = [])
     node.children.each_with_index do |child, index|
       duplicate_key_errors(child, "#{context}[#{index}]", errors)
     end
+  else
+    if node.respond_to?(:children) && node.children
+      node.children.each_with_index do |child, index|
+        duplicate_key_errors(child, "#{context}[#{index}]", errors)
+      end
+    end
   end
   errors
 end
