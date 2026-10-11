@@ -115,9 +115,6 @@ class MyOTAClient:
             expected_version=expected_version,
         )
 
-    def get_observability_session(self) -> dict[str, Any]:
-        return self.request("GET", "/v1/operations/observability-session")
-
     # Programme resources
     def patch_programme(
         self, slug: str, body: dict[str, Any]

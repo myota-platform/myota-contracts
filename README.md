@@ -15,13 +15,10 @@ dependency-light generated client used by the local integration slice.
   transient PDF previews. Draft schemas retain manager/signature/effective-date
   fields and custom text. Both clients expose these preferred methods. See the
   [designer resource guide](https://github.com/myota-platform/myota-docs/blob/main/docs/programme-and-award-design.md).
-- The Operations SeaweedFS sampled-status routes are retired. SeaweedFS
-  metrics are provided through the OpenTelemetry-backed Grafana dashboard;
-  `/v1/operations/observability-session` remains for per-user Grafana role
-  resolution.
-- Permission-checked JetStream status and paged snapshot-history resources at
-  `/v1/operations/jetstream` and `/v1/operations/jetstream/snapshots`, with
-  nullable unknown measurements rather than invented zero values.
+- The Operations Service and its HTTP routes are retired. The OTel Collector
+  owns bounded PostgreSQL metrics; the Gateway checks live Identity roles for
+  Grafana access. NATS/JetStream is monitored by Surveyor dashboards. No
+  `/v1/operations/*` endpoint remains.
 - Entity responses expose `version`; preferred entity update methods in both
   clients accept an optional version and send `If-Match`. Stale updates return
   HTTP 409, allowing users to reload before overwriting concurrent work.
@@ -84,7 +81,7 @@ Run the mirror/route check above with sibling repositories checked out; CI
 uses the same geodata and deployment registries. This repository has no
 runtime dev server. Use `myota-deploy` with Colima for end-to-end API tests.
 The [latest scaling delivery](https://github.com/myota-platform/myota-docs/blob/main/docs/geodata-horizontal-scaling-roadmap.md#latest-delivery-and-evidence--7-october-2026)
-links conditional edits, upload resources and authenticated operations APIs.
+links conditional edits, upload resources and authenticated resource APIs.
 
 See the [project charter](https://github.com/myota-platform/myota-docs/blob/main/docs/project-charter.md)
 and [charter gap analysis](https://github.com/myota-platform/myota-docs/blob/main/docs/charter-gap-analysis.md)

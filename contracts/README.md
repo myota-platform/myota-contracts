@@ -26,9 +26,7 @@ projection, prohibited-field, size, compatibility, and consumer checks.
 
 Geodata preprocessing still carries internal `_records` and `_status` in
 its source-derived event shape. Introduce and review a minimal versioned
-projection before enforcement. Operations has no domain-fact producer, so no
-Operations payload schema is applicable unless that service begins publishing
-facts.
+projection before enforcement. The Operations Service is retired; it owned no domain-fact producer or payload schema.
 
 Geodata entity categories use the shared master-data catalogue. `entityTypes`
 is the ordered category set, and the first category is the compatibility

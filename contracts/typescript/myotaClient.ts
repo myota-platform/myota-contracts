@@ -29,10 +29,6 @@ export class MyOTAClient {
   }
 
 
-  getObservabilitySession<T = unknown>(): Promise<T> {
-    return this.request<T>('/v1/operations/observability-session');
-  }
-
   patchProgramme<T = unknown>(slug: string, body: unknown): Promise<T> {
     return this.request<T>(`/v1/programmes/${encodeURIComponent(slug)}`, { method: 'PATCH', body, headers: { 'Idempotency-Key': crypto.randomUUID() } });
   }

@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "2a7f95b8d5bb8e131c5964dbcb88cc9b818717cb2181d7c664224195ed170d1e",
+  "canonicalSha256": "25aa3285bdb02cb67372d6b2df54f91d20404413dc8af1fc4f71d4e61282c34",
   "contractOperations": [
     {
       "method": "GET",
@@ -417,11 +417,6 @@
     {
       "method": "GET",
       "path": "/v1/notifications"
-    },
-    {
-      "method": "GET",
-      "operationId": "getObservabilitySession",
-      "path": "/v1/operations/observability-session"
     },
     {
       "method": "GET",
@@ -875,18 +870,6 @@
       "method": "GET",
       "path": "/v1/notifications",
       "service": "activity"
-    },
-    {
-      "file": "operations.py",
-      "method": "GET",
-      "path": "/v1/operations/observability-session",
-      "service": "operations"
-    },
-    {
-      "file": "operations.py",
-      "method": "GET",
-      "path": "/v1/operations/observability-session",
-      "service": "operations"
     },
     {
       "file": "programmes.py",
