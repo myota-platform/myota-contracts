@@ -138,6 +138,14 @@ jobs:
           cmp ../myota-geodata-service/migrations/021_jetstream_work_recovery.sql ../myota-deploy/db/migrations/geo/021_jetstream_work_recovery.sql
           cmp ../myota-geodata-service/migrations/021_jetstream_work_recovery.sql ../myota-platform/db/migrations/geo/021_jetstream_work_recovery.sql
 
+      - name: Self-test duplicate YAML key checker
+        working-directory: myota-contracts
+        run: ruby scripts/check_yaml_duplicate_keys.rb --self-test
+
+      - name: Reject duplicate OpenAPI mapping keys
+        working-directory: myota-contracts
+        run: ruby scripts/check_yaml_duplicate_keys.rb contracts/openapi.yaml
+
       - name: Validate YAML syntax
         working-directory: myota-contracts
         run: ruby -e 'require "yaml"; YAML.load_file("contracts/openapi.yaml"); YAML.load_file("contracts/semantic-duplicates.json")'

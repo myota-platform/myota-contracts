@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "63ee736e8a242a934ad1f99f81464b15f19c12c5233ae1b119aa9ccdc025ec0f",
+  "canonicalSha256": "f44f1c6cfd7abe9c838120ffb4b44c32e780c73242121df66a7e9a76cf060206",
   "contractOperations": [
     {
       "method": "GET",
@@ -273,10 +273,6 @@
     {
       "method": "POST",
       "path": "/v1/geodata/imports/{runId}/processed"
-    },
-    {
-      "method": "DELETE",
-      "path": "/v1/geodata/load-test-runs/{testRunId}"
     },
     {
       "method": "DELETE",
