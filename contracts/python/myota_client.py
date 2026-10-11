@@ -115,9 +115,6 @@ class MyOTAClient:
             expected_version=expected_version,
         )
 
-    def get_jetstream_status(self) -> dict[str, Any]:
-        return self.request("GET", "/v1/operations/jetstream")
-
     def get_object_storage_status(self) -> dict[str, Any]:
         return self.request("GET", "/v1/operations/object-storage")
 
@@ -132,15 +129,6 @@ class MyOTAClient:
 
     def get_observability_session(self) -> dict[str, Any]:
         return self.request("GET", "/v1/operations/observability-session")
-
-    def list_jetstream_snapshots(
-        self, page: int = 1, page_size: int = 20
-    ) -> dict[str, Any]:
-        return self.request(
-            "GET",
-            "/v1/operations/jetstream/snapshots",
-            query={"page": page, "pageSize": page_size},
-        )
 
     # Programme resources
     def patch_programme(
