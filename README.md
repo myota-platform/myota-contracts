@@ -51,6 +51,14 @@ deployment relay and its synchronized platform copy.
 Run the route and contract checks with
 `python3 scripts/check_contract_phase0.py --canonical contracts/openapi.yaml --mirror openapi.yaml --mirror ../myota-platform/contracts/openapi.yaml --service-root ../myota-deploy/services --service-root ../myota-geodata-service --semantic-baseline contracts/semantic-duplicates.json --inventory-out contracts/route-inventory.json`.
 
+The Geodata metadata contract now includes optional nullable `website` and
+`description` values on `GeoEntity`, manual proposal properties, and the
+existing metadata PATCH. PATCH omission preserves a value; null/empty input
+clears it. Website is limited to absolute HTTP/HTTPS URLs up to 2,048
+characters, and Description is plain text up to 2,000 characters. The new
+`geodata.entity.metadata-updated.v1` fact is recorded in the registry; it has no
+current subscribers, so it does not provision a durable consumer.
+
 The contract repository does not own runtime services or database migrations.
 Deployment and service ownership are documented in the
 [repository map](https://github.com/myota-platform/myota-docs/blob/main/docs/repository-map.md).
