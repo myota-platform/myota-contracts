@@ -319,6 +319,14 @@
         "myota-platform/services/myota_logging.py"
       ],
       "shared": true
+    },
+    {
+      "owner": "myota-geodata-service",
+      "path": "geodata_routes.py",
+      "mirrors": [
+        "myota-deploy/services/geodata_routes.py",
+        "myota-platform/services/geodata_routes.py"
+      ]
     }
   ]
 }
