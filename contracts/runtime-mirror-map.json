@@ -307,9 +307,14 @@
       ]
     },
     {
-      "owner": "myota-identity-service",
-      "path": "myota_logging.py",
+      "owner": "myota-platform",
+      "path": "runtime/myota_logging.py",
       "mirrors": [
+        "myota-identity-service/myota_logging.py",
+        "myota-programme-service/myota_logging.py",
+        "myota-activity-service/myota_logging.py",
+        "myota-geodata-service/myota_logging.py",
+        "myota-operations-service/myota_logging.py",
         "myota-deploy/services/myota_logging.py",
         "myota-platform/services/myota_logging.py"
       ],
