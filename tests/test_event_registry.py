@@ -468,6 +468,9 @@ class EventRegistryTests(unittest.TestCase):
         self.assertFalse(schema["additionalProperties"])
         self.assertNotIn("attempts", schema["properties"])
         self.assertIn("causationId", schema["properties"])
+        correlation_id = schema["properties"]["correlationId"]
+        self.assertEqual(correlation_id["maxLength"], 128)
+        self.assertEqual(correlation_id["pattern"], "^[\\x20-\\x7E]+$")
         self.assertEqual(schema["properties"]["eventId"]["format"], "uuid")
         self.assertEqual(schema["properties"]["occurredAt"]["pattern"], "Z$")
         work_schema = json.loads(
