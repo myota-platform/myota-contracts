@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Owner-to-mirror map for selected runtime modules, contract artifacts, and migration trees consumed by Deploy. Service adapters remain service-owned.",
+  "description": "Owner-to-mirror map for active source-owned runtime modules and selected contract artifacts. Retired Operations runtime modules are intentionally absent; historical migrations remain traceable.",
   "entries": [
     {
       "owner": "myota-identity-service",
@@ -280,22 +280,6 @@
       "mirrors": [
         "myota-deploy/services/run_geodata.py",
         "myota-platform/services/run_geodata.py"
-      ]
-    },
-    {
-      "owner": "myota-operations-service",
-      "path": "operations.py",
-      "mirrors": [
-        "myota-deploy/services/operations.py",
-        "myota-platform/services/operations.py"
-      ]
-    },
-    {
-      "owner": "myota-operations-service",
-      "path": "postgres_observability.py",
-      "mirrors": [
-        "myota-deploy/services/postgres_observability.py",
-        "myota-platform/services/postgres_observability.py"
       ]
     },
     {
