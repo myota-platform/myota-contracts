@@ -16,18 +16,29 @@ def main() -> int:
     for entry in data["entries"]:
         source = root / entry["owner"] / entry["path"]
         if not source.is_file():
-            errors.append(f"missing owner source: {entry['owner']}/{entry['path']}")
+            errors.append(
+                f"missing owner source: {entry['owner']}/{entry['path']}"
+            )
             continue
         for mirror in entry["mirrors"]:
             target = root / mirror
             if not target.is_file():
-                errors.append(f"missing mirror: {mirror} (from {entry['owner']}/{entry['path']})")
+                errors.append(
+                    f"missing mirror: {mirror} "
+                    f"(from {entry['owner']}/{entry['path']})"
+                )
             elif target.read_bytes() != source.read_bytes():
-                errors.append(f"drift: {mirror} differs from {entry['owner']}/{entry['path']}")
+                errors.append(
+                    f"drift: {mirror} differs from "
+                    f"{entry['owner']}/{entry['path']}"
+                )
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print(f"runtime mirror audit passed: {len(data['entries'])} owner paths, {sum(len(e['mirrors']) for e in data['entries'])} mirrors")
+    print(
+        f"runtime mirror audit passed: {len(data['entries'])} owner paths, "
+        f"{sum(len(e['mirrors']) for e in data['entries'])} mirrors"
+    )
     return 0
 
 
