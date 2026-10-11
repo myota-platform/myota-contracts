@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "f44f1c6cfd7abe9c838120ffb4b44c32e780c73242121df66a7e9a76cf060206",
+  "canonicalSha256": "723a9fea46f7629941aec978b10f90714a8bc44f217f227eb4ae74ef2031ff44",
   "contractOperations": [
     {
       "method": "GET",
@@ -417,16 +417,6 @@
     {
       "method": "GET",
       "path": "/v1/notifications"
-    },
-    {
-      "method": "GET",
-      "operationId": "getObjectStorageStatus",
-      "path": "/v1/operations/object-storage"
-    },
-    {
-      "method": "GET",
-      "operationId": "listObjectStorageSnapshots",
-      "path": "/v1/operations/object-storage/snapshots"
     },
     {
       "method": "GET",
@@ -885,18 +875,6 @@
       "method": "GET",
       "path": "/v1/notifications",
       "service": "activity"
-    },
-    {
-      "file": "operations.py",
-      "method": "GET",
-      "path": "/v1/operations/object-storage",
-      "service": "operations"
-    },
-    {
-      "file": "operations.py",
-      "method": "GET",
-      "path": "/v1/operations/object-storage/snapshots",
-      "service": "operations"
     },
     {
       "file": "operations.py",
