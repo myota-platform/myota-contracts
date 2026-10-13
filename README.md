@@ -39,6 +39,11 @@ coherent repository snapshot. Source mirror checks use that same workspace;
 retired Operations schema files and superseded Activity migrations remain
 traceable in the mirror map and are checked for absence from active Deploy and
 Platform migration trees.
+Deploy and Platform each own distinct alert rule files under
+`observability/rules.yml`: Deploy owns PostgreSQL monitoring alerts, while
+Platform owns NATS, service, queue, SeaweedFS, and HTTP alerts. CI checks an
+owner-specific marker in each file; the identical-path names do not make them
+mirrors.
 
 Browser file intake uses the contract's user-owned resumable upload-session
 resource, bounded binary part upload, progress lookup, explicit completion, and
