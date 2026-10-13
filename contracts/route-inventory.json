@@ -1,6 +1,6 @@
 {
   "canonical": "contracts/openapi.yaml",
-  "canonicalSha256": "125aa3285bdb02cb67372d6b2df54f91d20404413dc8af1fc4f71d4e61282c34",
+  "canonicalSha256": "ef3baf2665ea5cdf11c354f7bf1dfe135feba04f1b98290c14dadddd6726d9e2",
   "contractOperations": [
     {
       "method": "GET",
@@ -273,6 +273,10 @@
     {
       "method": "POST",
       "path": "/v1/geodata/imports/{runId}/processed"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/geodata/imports/{runId}/processing-queues/{queueId}"
     },
     {
       "method": "DELETE",
@@ -803,6 +807,12 @@
       "file": "geodata_routes.py",
       "method": "GET",
       "path": "/v1/geodata/imports/{runId}/candidates",
+      "service": "geodata_routes"
+    },
+    {
+      "file": "geodata_routes.py",
+      "method": "GET",
+      "path": "/v1/geodata/imports/{runId}/processing-queues/{queueId}",
       "service": "geodata_routes"
     },
     {
@@ -1487,6 +1497,12 @@
       "file": "geodata_routes.py",
       "method": "GET",
       "path": "/v1/geodata/imports/{runId}/candidates",
+      "service": "geodata_routes"
+    },
+    {
+      "file": "geodata_routes.py",
+      "method": "GET",
+      "path": "/v1/geodata/imports/{runId}/processing-queues/{queueId}",
       "service": "geodata_routes"
     },
     {

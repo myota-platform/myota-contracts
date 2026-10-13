@@ -29,6 +29,14 @@ dependency-light generated client used by the local integration slice.
 
 The OpenAPI document is the canonical cross-service contract. Geodata imports and manual proposals accept one or more shared `entityTypes`; the first ordered code is retained as the legacy primary `entityType`, while the relational assignment set is authoritative. Imports are programme-independent and first enter durable pre-processing; administrator promotion explicitly chooses CANDIDATE or APPROVED. Programme assignment and programme-specific eligibility remain separate concerns.
 
+Promotion requests return an asynchronous queue resource. Authorized import
+reviewers can read its terminal outcome at
+`GET /v1/geodata/imports/{runId}/processing-queues/{queueId}`; failed candidate
+outcomes can be retried without replaying candidates that already succeeded.
+The route registry check uses the same target branch as the contract pull
+request (`testing` for staged changes, otherwise `main`) so it validates a
+coherent repository snapshot.
+
 Browser file intake uses the contract's user-owned resumable upload-session
 resource, bounded binary part upload, progress lookup, explicit completion, and
 abort operations under `/v1/geodata/import-uploads`. See the
