@@ -182,8 +182,8 @@ jobs:
           cmp ../myota-activity-service/redrive_notification_dead_letter.py ../myota-platform/services/redrive_notification_dead_letter.py
           cmp ../myota-activity-service/redrive_notification_dead_letter.py ../myota-deploy/services/redrive_notification_dead_letter.py
           cmp ../myota-deploy/deploy/helm/myota/templates/activity-notification-topology.yaml ../myota-platform/deploy/helm/myota/templates/activity-notification-topology.yaml
-          cmp ../myota-activity-service/migrations/006_notification_consumer_replay.sql ../myota-deploy/db/migrations/activity/006_notification_consumer_replay.sql
-          cmp ../myota-activity-service/migrations/006_notification_consumer_replay.sql ../myota-platform/db/migrations/activity/006_notification_consumer_replay.sql
+          cmp ../myota-deploy/db/migrations/activity/006_notification_consumer_replay.sql ../myota-platform/db/migrations/activity/006_notification_consumer_replay.sql
+          cmp ../myota-deploy/db/migrations/activity/007_activity_jetstream_work.sql ../myota-platform/db/migrations/activity/007_activity_jetstream_work.sql
           cmp ../myota-deploy/observability/otel-collector.yaml ../myota-platform/observability/otel-collector.yaml
           cmp ../myota-deploy/observability/rules.yml ../myota-platform/observability/rules.yml
           cmp ../myota-geodata-service/import_retention.py ../myota-deploy/services/import_retention.py
