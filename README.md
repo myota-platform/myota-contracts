@@ -36,8 +36,9 @@ outcomes can be retried without replaying candidates that already succeeded.
 The route registry check uses the same target branch as the contract pull
 request (`testing` for staged changes, otherwise `main`) so it validates a
 coherent repository snapshot. Source mirror checks use that same workspace;
-the retired Operations migration records remain traceable in the mirror map
-and are checked for absence from active Deploy and Platform migrations.
+retired Operations schema files and superseded Activity migrations remain
+traceable in the mirror map and are checked for absence from active Deploy and
+Platform migration trees.
 
 Browser file intake uses the contract's user-owned resumable upload-session
 resource, bounded binary part upload, progress lookup, explicit completion, and

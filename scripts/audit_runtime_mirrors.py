@@ -54,7 +54,7 @@ def main() -> int:
 
     for entry in data.get("retiredEntries", []):
         source = root / entry["owner"] / entry["path"]
-        if not source.is_file():
+        if not entry.get("sourceRetired") and not source.is_file():
             errors.append(
                 f"missing retired source record: "
                 f"{entry['owner']}/{entry['path']}"
