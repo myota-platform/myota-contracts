@@ -24,7 +24,6 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/myota-deploy
           path: myota-deploy
-          ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
           token: ${{ github.token }}
 
       - name: Check out geodata service runtime routes
@@ -32,7 +31,6 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/myota-geodata-service
           path: myota-geodata-service
-          ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
           token: ${{ github.token }}
 
       - name: Check out identity event producers
@@ -40,7 +38,6 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/myota-identity-service
           path: myota-identity-service
-          ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
           token: ${{ github.token }}
 
       - name: Check out programme event producers
@@ -48,7 +45,6 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/myota-programme-service
           path: myota-programme-service
-          ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
           token: ${{ github.token }}
 
       - name: Check out activity event producers
@@ -56,7 +52,6 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/myota-activity-service
           path: myota-activity-service
-          ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
           token: ${{ github.token }}
 
       - name: Check out operations event producers
@@ -71,6 +66,29 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/myota-platform
           path: myota-platform
+          token: ${{ github.token }}
+
+      - name: Check out deployment route registry for the contract target branch
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-deploy
+          path: myota-deploy-target
+          ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
+          token: ${{ github.token }}
+
+      - name: Check out geodata route registry for the contract target branch
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-geodata-service
+          path: myota-geodata-service-target
+          ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
+          token: ${{ github.token }}
+
+      - name: Check out platform contract mirror for the contract target branch
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/myota-platform
+          path: myota-platform-target
           ref: ${{ github.base_ref == 'testing' && 'testing' || 'main' }}
           token: ${{ github.token }}
 
@@ -162,9 +180,9 @@ jobs:
           python3 scripts/check_contract_phase0.py
           --canonical contracts/openapi.yaml
           --mirror openapi.yaml
-          --mirror ../myota-platform/contracts/openapi.yaml
-          --service-root ../myota-deploy/services
-          --service-root ../myota-geodata-service
+          --mirror ../myota-platform-target/contracts/openapi.yaml
+          --service-root ../myota-deploy-target/services
+          --service-root ../myota-geodata-service-target
           --semantic-baseline contracts/semantic-duplicates.json
           --inventory-out contracts/route-inventory.json
 
