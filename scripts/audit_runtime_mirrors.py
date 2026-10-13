@@ -52,6 +52,20 @@ def main() -> int:
                     f"{entry['owner']}/{entry['path']}"
                 )
 
+    for entry in data.get("retiredEntries", []):
+        source = root / entry["owner"] / entry["path"]
+        if not source.is_file():
+            errors.append(
+                f"missing retired source record: "
+                f"{entry['owner']}/{entry['path']}"
+            )
+        for mirror in entry.get("formerMirrors", []):
+            if (root / mirror).exists():
+                errors.append(
+                    f"retired mirror still exists: {mirror} "
+                    f"(from {entry['owner']}/{entry['path']})"
+                )
+
     tree_count = 0
     for entry in data.get("treeEntries", []):
         source = root / entry["owner"] / entry["path"]
@@ -91,7 +105,8 @@ def main() -> int:
         return 1
     print(
         f"source mirror audit passed: {len(data['entries'])} owner files, "
-        f"{mirror_count} file mirrors, {tree_count} exact tree mirrors"
+        f"{mirror_count} file mirrors, {tree_count} exact tree mirrors, "
+        f"{len(data.get('retiredEntries', []))} retired artifacts absent"
     )
     return 0
 
