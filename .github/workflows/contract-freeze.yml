@@ -188,13 +188,13 @@ jobs:
           cmp ../myota-geodata-service/import_retention.py ../myota-deploy/services/import_retention.py
           cmp ../myota-geodata-service/import_retention.py ../myota-platform/services/import_retention.py
           cmp ../myota-deploy/deploy/helm/myota/templates/deployment.yaml ../myota-platform/deploy/helm/myota/templates/deployment.yaml
-          cmp ../myota-deploy/db/migrations/core/004_outbox_dead_letter_redrive.sql ../myota-platform/db/migrations/core/004_outbox_dead_letter_redrive.sql
-          cmp ../myota-deploy/db/migrations/activity/005_outbox_dead_letter_redrive.sql ../myota-platform/db/migrations/activity/005_outbox_dead_letter_redrive.sql
-          cmp ../myota-deploy/db/migrations/geo/020_outbox_dead_letter_redrive.sql ../myota-platform/db/migrations/geo/020_outbox_dead_letter_redrive.sql
-          cmp ../myota-activity-service/migrations/005_outbox_dead_letter_redrive.sql ../myota-deploy/db/migrations/activity/005_outbox_dead_letter_redrive.sql
-          cmp ../myota-geodata-service/migrations/020_outbox_dead_letter_redrive.sql ../myota-deploy/db/migrations/geo/020_outbox_dead_letter_redrive.sql
-          cmp ../myota-geodata-service/migrations/021_jetstream_work_recovery.sql ../myota-deploy/db/migrations/geo/021_jetstream_work_recovery.sql
-          cmp ../myota-geodata-service/migrations/021_jetstream_work_recovery.sql ../myota-platform/db/migrations/geo/021_jetstream_work_recovery.sql
+          # Database-specific migration histories have been consolidated into
+          # owner-managed baselines. Keep the synchronized Deploy/Platform
+          # copies of those active baselines byte-identical; retired numbered
+          # migration files are intentionally absent from both trees.
+          cmp ../myota-deploy/db/migrations/core/001_core_baseline.sql ../myota-platform/db/migrations/core/001_core_baseline.sql
+          cmp ../myota-deploy/db/migrations/activity/001_activity_baseline.sql ../myota-platform/db/migrations/activity/001_activity_baseline.sql
+          cmp ../myota-deploy/db/migrations/geo/001_geodata_baseline.sql ../myota-platform/db/migrations/geo/001_geodata_baseline.sql
 
       - name: Self-test duplicate YAML key checker
         working-directory: myota-contracts
