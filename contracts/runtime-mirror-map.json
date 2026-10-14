@@ -290,7 +290,6 @@
         "myota-programme-service/myota_logging.py",
         "myota-activity-service/myota_logging.py",
         "myota-geodata-service/myota_logging.py",
-        "myota-operations-service/myota_logging.py",
         "myota-deploy/services/myota_logging.py",
         "myota-platform/services/myota_logging.py"
       ],
@@ -320,33 +319,6 @@
         "myota-platform/contracts/event-registry.json"
       ],
       "artifactType": "event-registry"
-    },
-    {
-      "owner": "myota-operations-service",
-      "path": "migrations/001_operations.sql",
-      "mirrors": [
-        "myota-deploy/db/migrations/core/002_operations.sql",
-        "myota-platform/db/migrations/core/002_operations.sql"
-      ],
-      "artifactType": "migration"
-    },
-    {
-      "owner": "myota-operations-service",
-      "path": "migrations/002_storage_snapshots.sql",
-      "mirrors": [
-        "myota-deploy/db/migrations/core/003_storage_snapshots.sql",
-        "myota-platform/db/migrations/core/003_storage_snapshots.sql"
-      ],
-      "artifactType": "migration"
-    },
-    {
-      "owner": "myota-operations-service",
-      "path": "migrations/003_retire_storage_snapshots.sql",
-      "mirrors": [
-        "myota-deploy/db/migrations/core/006_retire_storage_snapshots.sql",
-        "myota-platform/db/migrations/core/006_retire_storage_snapshots.sql"
-      ],
-      "artifactType": "migration"
     },
     {
       "owner": "myota-deploy",
@@ -393,6 +365,55 @@
         "myota-platform/db/migrations/geo"
       ],
       "artifactType": "migrations"
+    }
+  ],
+  "retiredEntries": [
+    {
+      "owner": "myota-operations-service",
+      "path": "migrations/001_operations.sql",
+      "formerMirrors": [
+        "myota-deploy/db/migrations/core/002_operations.sql",
+        "myota-platform/db/migrations/core/002_operations.sql"
+      ],
+      "reason": "Operations Service is retired; its schema objects were removed from active Deploy and Platform migrations."
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "migrations/002_storage_snapshots.sql",
+      "formerMirrors": [
+        "myota-deploy/db/migrations/core/003_storage_snapshots.sql",
+        "myota-platform/db/migrations/core/003_storage_snapshots.sql"
+      ],
+      "reason": "Operations Service is retired; its schema objects were removed from active Deploy and Platform migrations."
+    },
+    {
+      "owner": "myota-operations-service",
+      "path": "migrations/003_retire_storage_snapshots.sql",
+      "formerMirrors": [
+        "myota-deploy/db/migrations/core/006_retire_storage_snapshots.sql",
+        "myota-platform/db/migrations/core/006_retire_storage_snapshots.sql"
+      ],
+      "reason": "Operations Service is retired; its schema objects were removed from active Deploy and Platform migrations."
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "migrations/006_notification_consumer_replay.sql",
+      "sourceRetired": true,
+      "formerMirrors": [
+        "myota-deploy/db/migrations/activity/006_notification_consumer_replay.sql",
+        "myota-platform/db/migrations/activity/006_notification_consumer_replay.sql"
+      ],
+      "reason": "The unified Activity migration baseline replaced this incremental migration; its old mirror must remain absent from active migration trees."
+    },
+    {
+      "owner": "myota-activity-service",
+      "path": "migrations/007_activity_jetstream_work.sql",
+      "sourceRetired": true,
+      "formerMirrors": [
+        "myota-deploy/db/migrations/activity/007_activity_jetstream_work.sql",
+        "myota-platform/db/migrations/activity/007_activity_jetstream_work.sql"
+      ],
+      "reason": "The unified Activity migration baseline replaced this incremental migration; its old mirror must remain absent from active migration trees."
     }
   ]
 }
